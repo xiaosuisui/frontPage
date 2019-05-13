@@ -245,7 +245,7 @@ const columns = [
         },
       connection() {
         // 建立连接对象
-        let socket = new SockJS('http://127.0.0.1:9527/webSocketServer');
+        let socket = new SockJS('http://101.132.139.133:9527/webSocketServer');
         // 获取STOMP子协议的客户端对象
         this.stompClient = Stomp.over(socket);
         // 定义客户端的认证信息,按需求配置
