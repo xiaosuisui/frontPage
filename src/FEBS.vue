@@ -95,7 +95,7 @@ export default {
   }
 
   .ant-card-wider-padding .ant-card-body {
-    padding: 5px 10px !important;
+    /*padding: 5px 10px !important;*/
   }
 
   .ant-modal-mask {
