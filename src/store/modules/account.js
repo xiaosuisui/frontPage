@@ -7,7 +7,7 @@ export default {
     expireTime: db.get('EXPIRE_TIME'),
     user: db.get('USER'),
     permissions: db.get('PERMISSIONS'),
-    roles: db.get('ROLES')
+    roles: db.get('ROLES'),
   },
   mutations: {
     setToken (state, val) {

@@ -4,7 +4,7 @@ import MenuView from '@/views/common/MenuView'
 import PageView from '@/views/common/PageView'
 import LoginView from '@/views/login/Common'
 import EmptyPageView from '@/views/common/EmptyPageView'
-import HomePageView from '@/views/HomePage'
+import HomePageView from '@/views/function/monitor/Monitor'
 import db from 'utils/localstorage'
 import request from 'utils/request'
 
@@ -43,6 +43,7 @@ router.beforeEach((to, from, next) => {
     if (!asyncRouter) {
       if (!userRouter) {
         request.get(`menu/${user.username}`).then((res) => {
+         // res.data[0].redirect = '/function/monitor'
           asyncRouter = res.data
           save('USER_ROUTER', asyncRouter)
           go(to, next)

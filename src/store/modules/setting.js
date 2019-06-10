@@ -34,6 +34,7 @@ export default {
       state.isMobile = isMobile
     },
     setTheme (state, theme) {
+      console.log(theme);
       db.save('THEME', theme)
       state.theme = theme
     },

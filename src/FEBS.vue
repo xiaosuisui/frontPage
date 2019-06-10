@@ -7,60 +7,64 @@
 </template>
 
 <script>
-import enquireScreen from './utils/device'
-import chinese from 'ant-design-vue/lib/locale-provider/zh_CN'
-import 'moment/locale/zh-cn'
+  import enquireScreen from './utils/device'
+  import chinese from 'ant-design-vue/lib/locale-provider/zh_CN'
+  import 'moment/locale/zh-cn'
 
-export default {
-  name: 'Febs',
-  data () {
-    return {
-      chinese
+  export default {
+    name: 'Febs',
+    data () {
+      return {
+        chinese
+      }
+    },
+    created () {
+      let _this = this
+      enquireScreen(isMobile => {
+        _this.$store.commit('setting/setDevice', isMobile)
+      })
     }
-  },
-  created () {
-    let _this = this
-    enquireScreen(isMobile => {
-      _this.$store.commit('setting/setDevice', isMobile)
-    })
   }
-}
 </script>
 <style lang="less">
-	html body{
-		height: 100% !important;
-	}
-	#febs{
-		height: 100% !important;
-	}
+  html body {
+    height: 100% !important;
+  }
+
+  #febs {
+    height: 100% !important;
+  }
+
   :global {
     .dragable-ghost {
       border: 1px dashed #aaaaaa;
       opacity: 0.65;
     }
+
     .dragable-chose {
       border: 1px dashed #aaaaaa;
       opacity: 0.65;
     }
+
     .dragable-drag {
       border: 1px dashed #aaaaaa;
       opacity: 0.65;
     }
   }
 
-  ::-webkit-scrollbar {
-    width: .5rem;
-    height: .5rem;
-  }
+  /*::-webkit-scrollbar {*/
+  /*  width: .5rem;*/
+  /*  height: .5rem;*/
+  /*}*/
 
-  ::-webkit-scrollbar-track {
-    border-radius: 1px;
-  }
+  /*::-webkit-scrollbar-track {*/
+  /*  border-radius: 1px;*/
+  /*}*/
 
-  ::-webkit-scrollbar-thumb {
-    border-radius: 1px;
-    background: rgba(0, 0, 0, .2);
-  }
+  /*::-webkit-scrollbar-thumb {*/
+  /*  border-radius: 1px;*/
+  /*  background: rgba(0, 0, 0, .2);*/
+  /*}*/
 
   .multi-page {
     margin: -24px 0 0
@@ -90,8 +94,9 @@ export default {
     border-radius: 2px !important;
   }
 
+
   .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab, .ant-tabs.ant-tabs-card > .ant-tabs-bar .ant-tabs-tab {
-    border-radius:  3px 3px 0 0 !important;
+    border-radius: 3px 3px 0 0 !important;
   }
 
   .ant-card-wider-padding .ant-card-body {
@@ -99,22 +104,58 @@ export default {
   }
 
   .ant-modal-mask {
-    background-color: rgba(0, 0, 0, 0.6) !important;
+    background-color: rgba(0, 0, 0, 0.5) !important;
   }
 
   .ant-modal-header {
     border-bottom-color: #fff !important;
   }
 
-  .ant-menu-dark .ant-menu-inline.ant-menu-sub {
+  .ant-menu-light .ant-menu-inline.ant-menu-sub {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) inset !important;
   }
 
   .ant-menu-inline .ant-menu-item, .ant-menu-vertical .ant-menu-item {
     margin-top: 0 !important;
   }
-  .ant-menu-dark, .ant-menu-dark .ant-menu-sub {
-    background: #393e46 !important;
+
+  .ant-menu-light, .ant-menu-light .ant-menu-sub {
+    color: #6e6e6e !important;
+    font-size: 16px !important;
+  }
+
+  .ant-menu.ant-menu-light .ant-menu-item-selected, .ant-menu-submenu-popup.ant-menu-light .ant-menu-item-selected {
+    font-size: 16px !important;
+    /*border-bottom: 4px solid #296ba7;*/
+    border-bottom-color: #296ba7 !important;
+    /*background-image: url("./assets/header-bg.png") !important;*/
+  }
+
+  .ant-menu-horizontal > .ant-menu-item-selected > a {
+    color: #016bac !important;
+  }
+
+  .ant-menu-horizontal > .ant-menu-item:hover, .ant-menu-horizontal > .ant-menu-submenu:hover, .ant-menu-horizontal > .ant-menu-item-active, .ant-menu-horizontal > .ant-menu-submenu-active, .ant-menu-horizontal > .ant-menu-item-open, .ant-menu-horizontal > .ant-menu-submenu-open, .ant-menu-horizontal > .ant-menu-item-selected, .ant-menu-horizontal > .ant-menu-submenu-selected {
+    color: #016bac !important;
+    border-bottom-color: #296ba7 !important;
+  }
+
+  .ant-menu-item:hover, .ant-menu-item-active, .ant-menu:not(.ant-menu-inline) .ant-menu-submenu-open, .ant-menu-submenu-active, .ant-menu-submenu-title:hover {
+    color: #016bac !important;
+  }
+
+  .ant-menu-light {
+    /*background-image: url("./assets/header-bg.png") !important;*/
+    /*background-repeat: no-repeat;*/
+    background: none !important;
+  }
+
+  /*.ant-menu-dark{*/
+  /*  background: #393e46 !important;*/
+  /*}*/
+
+  .ant-menu-sub {
+    background: #fff !important;
   }
 
   .ant-table-row-expand-icon {
@@ -126,36 +167,49 @@ export default {
     border-radius: 3px 0 0 0;
     background: #fafafa;
   }
-  .ant-card-loading{
-    &:after{
+
+  .ant-card-loading {
+    &:after {
       width: 0 !important;
     }
   }
+
   .ant-tabs-tab-next.ant-tabs-tab-arrow-show {
     border: 1px solid #e8e8e8;
     border-radius: 0 3px 0 0;
     background: #fafafa;
   }
+
   .ant-layout-header, .system-top-menu {
-    height: 59px !important;
-    line-height: 59px !important;
+    height: 42px !important;
+    line-height: 42px !important;
   }
+
+  .ant-menu-item, .ant-menu-submenu-title {
+    padding: 0 17px;
+  }
+
   .ant-form-item {
-    margin-bottom: 1rem !important;
+    /*margin-bottom: 1rem !important;*/
   }
+
   .ant-menu-inline, .ant-menu-vertical, .ant-menu-vertical-left {
     border-right: 0 solid #ccc !important;
   }
+
   .ant-drawer-body {
     padding-bottom: 3rem !important;
   }
+
   .page-tabs .ant-tabs-close-x {
-    color:#fff !important;
-    margin-left: 0.3rem! important;
+    color: #fff !important;
+    margin-left: 0.3rem ! important;
   }
+
   .page-tabs:hover .ant-tabs-close-x {
     color: #f95476 !important;
   }
+
   .drawer-bootom-button {
     position: absolute;
     bottom: 0;
@@ -167,18 +221,22 @@ export default {
     background: #fff;
     border-radius: 0 0 2px 2px;
   }
+
   .search {
     margin-bottom: .5rem !important;
   }
+
   i {
     font-size: .97rem;
   }
+
   p {
     overflow: hidden;
     text-overflow: ellipsis;
     word-break: break-all;
     white-space: nowrap;
   }
+
   @media screen and (min-width: 1400px) {
   }
 
@@ -187,9 +245,11 @@ export default {
     .ant-menu-vertical .ant-menu-item, .ant-menu-vertical-left .ant-menu-item, .ant-menu-vertical-right .ant-menu-item, .ant-menu-inline .ant-menu-item, .ant-menu-vertical .ant-menu-submenu-title, .ant-menu-vertical-left .ant-menu-submenu-title, .ant-menu-vertical-right .ant-menu-submenu-title, .ant-menu-inline .ant-menu-submenu-title {
       font-size: 13px !important;
     }
+
     .ant-card-head {
       font-size: 14px !important;
     }
+
     .page-tabs .ant-tabs-nav-container {
       font-size: 13px !important;
     }

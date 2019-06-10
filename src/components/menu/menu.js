@@ -13,7 +13,7 @@ export default {
     theme: {
       type: String,
       required: false,
-      default: 'dark'
+      default: 'light'
     },
     mode: {
       type: String,
@@ -78,7 +78,7 @@ export default {
             'a',
             {attrs: {href: '#' + menu.path}},
             [
-              this.renderIcon(h, menu.icon),
+              menu.path !== '/home' && this.renderIcon(h, menu.icon),
               h('span', [menu.name])
             ]
           )
@@ -90,7 +90,7 @@ export default {
       let subItem = [h('span',
         {slot: 'title'},
         [
-          this.renderIcon(h, menu.icon),
+          // this.renderIcon(h, menu.icon),
           h('span', [menu.name])
         ]
       )]
