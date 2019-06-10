@@ -11,13 +11,33 @@
             <!--               class="system-btn-stop"></a>-->
           </div>
           <div class="logo-text"></div>
-          <div class="run-timer">
+          <div class="run-timer" style="right: 282px">
             <div>
-              <img src="../../../assets/run-time.png"/>&nbsp;
+              <img src="../../../assets/images/run-time.png"/>&nbsp;
             </div>
             <div style="font-size: 16px;color: #0f7291">运行时长</div>&nbsp;
             <div class="run-timer-bg">10</div>&nbsp;
             <div style="font-size: 16px;color: #0f7291">分钟</div>
+          </div>
+          <div class="run-timer">
+            <div>
+              <img src="../../../assets/images/user-icon.png"/>&nbsp;
+            </div>
+            <div style="font-size: 16px;color: #0f7291">用户昵称</div>&nbsp;
+            <div class="run-timer-bg">{{user.username}}</div>&nbsp;&nbsp;
+            <div>
+              <a-popover placement="bottomRight" trigger="click" v-model="visible">
+                <template slot="content">
+                  <p style="margin: 10px;font-size: 16px;color: #6d6d6d" @click="switchAccount()">切换账号</p>
+                  <div style=" width:70%;height: 1px;background:rgba(0, 0, 0, 0.1); margin: 0 auto"></div>
+                  <p style="margin: 10px;font-size: 16px;color: #6d6d6d" @click="loginOut()">退出登录</p>
+                </template>
+                <!--                <template slot="title">-->
+                <!--                  <span>Title</span>-->
+                <!--                </template>-->
+                <img src="../../../assets/images/btn-popover.png" @click="popoverShow()"/>&nbsp;
+              </a-popover>
+            </div>
           </div>
         </div>
       </a-col>
@@ -43,7 +63,8 @@
             </div>
             <div class="card-item-title card-item-title-underline"><span>{{monitor.rawmaterialName?monitor.rawmaterialName:'空'}}</span>
             </div>
-            <div class="card-item-title card-item-title-underline"><span>{{monitor.currentWeight}}</span></div>
+            <div class="card-item-title card-item-title-underline"><span
+              :class="reserves(monitor.currentWeight)">{{monitor.currentWeight}}</span></div>
             <div class="card-item-title"><span>{{monitor.standardWeight?monitor.standardWeight:0}}</span></div>
             <!--            <a-card hoverable :bordered=true>-->
             <!--              <template class="ant-card-actions" slot="actions">-->
@@ -90,7 +111,8 @@
             </div>
             <div class="card-item-title card-item-title-underline"><span>{{monitor.rawmaterialName?monitor.rawmaterialName:'空'}}</span>
             </div>
-            <div class="card-item-title card-item-title-underline"><span>{{monitor.currentWeight}}</span></div>
+            <div class="card-item-title card-item-title-underline"><span
+              :class="reserves(monitor.currentWeight)">{{monitor.currentWeight}}</span></div>
             <div class="card-item-title"><span>{{monitor.standardWeight?monitor.standardWeight:0}}</span></div>
 
             <!--          <a-col :class="colClass" v-for="(monitor, index) in monitorDouble" :key="index">-->
@@ -180,13 +202,16 @@
 
 
       <!--存放工单列表-->
-      <a-col :span="7" style="max-width: 630px">
+      <a-col :span="8" style="max-width:630px;max-height:851px">
         <div style="margin-left: 10px;width: 630px">
           <a-row>
-            <a-col :span="24">
-              <a-table :columns="columns" :dataSource="data" size="large" :scroll="{ x: 630}"
-                       :pagination="{hideOnSinglePage:true}"
-                       :rowSelection="{type:'radio',selectedRowKeys:selectedRowKeys,onChange: onSelectChange}">
+            <a-col :span="24" style="height: 566px;background: #2d354e">
+              <a-table :columns="columns" :dataSource="data" size="large"
+                       :pagination="false"
+                       :scroll="{y:460}"
+                       :customRow="customRow"
+              >
+                <!--                       :rowSelection="{type:'radio',selectedRowKeys:selectedRowKeys,onChange: onSelectChange}"-->
                 <!--                <template slot="operation" slot-scope="text, record">-->
                 <!--                  <a-popconfirm title="确定下载工单么?" @confirm="download(record)" okText="确定" cancelText="取消">-->
                 <!--                    <a-icon type="download" title="下载工单"></a-icon>-->
@@ -200,7 +225,7 @@
               </a-table>
             </a-col>
           </a-row>
-          <a-row class="btn-view" type="flex" align="middle">
+          <a-row class="btn-view" type="flex" align="middle" style="height: 82px">
             <a-col :span="8">
               <div class="down-btn" @click="showConfirm()"></div>
             </a-col>
@@ -216,7 +241,7 @@
               <div class="material-header">
                 原料条码
               </div>
-              <a-row style="max-height: 153px;">
+              <a-row style="height: 153px;">
                 <a-col :span="24" v-for="(material,index) of material_code" :key="index" class="material-item">
                   {{index+1}}&nbsp;&nbsp;&nbsp;&nbsp;{{material}}
                 </a-col>
@@ -231,13 +256,82 @@
         <a-icon type="warning"/>&nbsp;<span>系统警告提示:</span>&nbsp;<span>12号螺旋电机过载</span>
       </a-col>
     </a-row>
+    <a-modal
+      :visible="modalStatus"
+      :closable="false"
+      :footer="null"
+      :bodyStyle="bodyStyle"
+      :centered="true"
+      :width="360"
+      @cancel="() => setModalVisible(false)"
+    >
+      <a-form @submit.prevent="doLogin" :autoFormCreate="(form) => this.form = form" class="login-form">
+        <div class="login-title"></div>
+        <a-form-item
+          fieldDecoratorId="name"
+          :fieldDecoratorOptions="{rules: [{ required: true, message: '请输入用户名', whitespace: true}]}"
+          style="display: flex; justify-content: center;align-items: center">
+          <a-input size="large" class="input-bg" placeholder="请输入用户名">
+            <a-icon slot="prefix" type="user" style="color:#3586df"></a-icon>
+          </a-input>
+        </a-form-item>
+        <a-form-item
+          fieldDecoratorId="password"
+          :fieldDecoratorOptions="{rules: [{ required: true, message: '请输入密码', whitespace: true}]}"
+          style="display: flex; justify-content: center;align-items: center">
+          <a-input size="large" type="password" class="input-bg" placeholder="请输入密码">
+            <a-icon slot="prefix" type="lock" style="color:#3586df"></a-icon>
+          </a-input>
+        </a-form-item>
+        <a-row type="flex" justify="space-around">
+          <a-col :span="10">
+            <a-button :loading="loading" size="large" htmlType="submit" type="primary">
+              登录
+            </a-button>
+          </a-col>
+          <a-col :span="10">
+            <a-button size="large" type="primary" @click="setModalVisible(false)" class="cancel">
+              取消
+            </a-button>
+          </a-col>
+        </a-row>
+      </a-form>
+    </a-modal>
+    <a-modal
+      :visible="modalLoginOutStatus"
+      :closable="false"
+      :footer="null"
+      :bodyStyle="bodyStyleLoginOut"
+      :centered="true"
+      :width="360"
+      @cancel="() => setModalLoginOutVisible(false)"
+    >
+      <a-row style="margin-top: 6px">
+        <a-col :span="24" style="font-size: 28px;color: #28988a;text-align: center">温馨提示</a-col>
+      </a-row>
+      <a-row style="margin-top: 30px">
+        <a-col :span="24" style="font-size: 22px;color: #28988a;text-align: center">您是否要退出该账号?</a-col>
+      </a-row>
+      <a-row type="flex" justify="space-around" class="login-out-btn">
+        <a-col :span="10">
+          <a-button size="large" type="primary" @click="doLoginOut()">
+            确定
+          </a-button>
+        </a-col>
+        <a-col :span="10">
+          <a-button size="large" type="primary" @click="setModalLoginOutVisible(false)" class="cancel">
+            取消
+          </a-button>
+        </a-col>
+      </a-row>
+    </a-modal>
 
   </div>
 </template>
 <script>
   import SockJS from 'sockjs-client'
   import Stomp from 'stompjs'
-  import {mapState} from 'vuex'
+  import {mapMutations, mapState} from 'vuex'
   import Icons from '../../system/menu/Icons'
   import ACol from 'ant-design-vue/es/grid/Col'
   import ARow from 'ant-design-vue/es/grid/Row'
@@ -253,28 +347,33 @@
       title: '序号',
       dataIndex: 'index',
       align: 'center',
+      width: 90,
       scopedSlots: {customRender: 'index'},
     }, {
       title: '工单号/配方号',
       dataIndex: 'name',
       align: 'center',
+      width: 150,
       scopedSlots: {customRender: 'name'},
     },
     {
       title: '批次',
       dataIndex: 'batch',
       align: 'center',
+      width: 90,
       scopedSlots: {customRender: 'batch'},
     },
     {
       title: '生产状态',
       dataIndex: 'status',
       align: 'center',
+      width: 100,
     },
     {
       title: '排程时间',
       dataIndex: 'createDate01',
       align: 'center',
+      width: 200,
     }
   ]
   const data = []
@@ -298,8 +397,22 @@
         colClass: 'six6',
         stompClient: '',
         timer: '',
-        selectedRowKeys: [],
-        material_code: ['WPBS20190513180788', 'WPBS20190513180788', 'WPBS20190513180788', 'WPBS20190513180788', 'WPBS20190513180788']
+        selectedProduction: null,
+        material_code: ['WPBS20190513180788', 'WPBS20190513180788', 'WPBS20190513180788', 'WPBS20190513180788', 'WPBS20190513180788'],
+        modalStatus: false,
+        bodyStyle: {
+          width: '360px',
+          height: '280px',
+        },
+        bodyStyleLoginOut: {
+          width: '360px',
+          height: '210px'
+        },
+        loading: false,
+        error: '',
+        activeKey: '1',
+        visible: false,
+        modalLoginOutStatus: false
       }
     },
     activated () {
@@ -312,6 +425,30 @@
       this.initWebSocket()
     },
     computed: {
+      reserves () {
+        return (num) => {
+          if (num > 300) {
+            return 'card-item-title-white'
+          }
+          return 'card-item-title-red'
+        }
+      },
+      customRow () {
+        return (record) => {
+          return {
+            props: {},
+            on: { // 事件
+              click: () => {
+                this.selectedProduction = record
+                console.log(record)
+              },       // 点击行
+            },
+            style: {
+              background: this.selectedProduction && this.selectedProduction.key === record.key ? '#2d9184' : '#2d354e'
+            }
+          }
+        }
+      },
       ...mapState({
         user: state => state.account.user
       })
@@ -323,9 +460,24 @@
       clearInterval(this.timer)
     },
     methods: {
+      ...mapMutations({
+        setToken: 'account/setToken',
+        setExpireTime: 'account/setExpireTime',
+        setPermissions: 'account/setPermissions',
+        setRoles: 'account/setRoles',
+        setUser: 'account/setUser',
+        setTheme: 'setting/setTheme',
+        setLayout: 'setting/setLayout',
+        setMultipage: 'setting/setMultipage',
+        fixSiderbar: 'setting/fixSiderbar',
+        fixHeader: 'setting/fixHeader',
+        setColor: 'setting/setColor',
+        setPlc: 'setting/setPlc'
+      }),
       initWebSocket () {
         this.connection()
         let that = this
+        this.setPlc(1)
       },
       onSelectChange (selectedRowKeys, selectedRows) {
         console.log('selectedRowKeys changed: ', selectedRowKeys, selectedRows)
@@ -399,8 +551,8 @@
         })
       },
       download () {
-        if (this.selectedRows.length > 0) {
-          let record = this.selectedRows[0]
+        if (this.selectedProduction) {
+          let record = this.selectedProduction
           const params = {id: record['key'], 'userName': this.user.username}
           this.$get('formular/downLoadFormula', {
             ...params
@@ -461,6 +613,72 @@
           let data = r.data
           this.data = data
         })
+      },
+      popoverShow () {
+        this.visible = !this.visible
+      },
+      // 登出
+      loginOut () {
+        this.visible = false
+        this.setModalLoginOutVisible(true)
+      },
+      doLoginOut () {
+        this.$router.push('/login')
+      },
+      // 切换账号
+      switchAccount () {
+        this.visible = false
+        this.setModalVisible(true)
+      },
+      setModalVisible (modalStatus) {
+        this.modalStatus = modalStatus
+      },
+      setModalLoginOutVisible (modalStatus) {
+        this.modalLoginOutStatus = modalStatus
+      },
+      doLogin () {
+        if (this.activeKey === '1') {
+          // 用户名密码登录
+          this.form.validateFields(['name', 'password'], (errors, values) => {
+            if (!errors) {
+              this.loading = true
+              let name = this.form.getFieldValue('name')
+              let password = this.form.getFieldValue('password')
+              this.$post('login', {
+                username: name,
+                password: password
+              }).then((r) => {
+                let data = r.data.data
+                this.saveLoginData(data)
+                this.setModalVisible(false)
+                setTimeout(() => {
+                  this.loading = false
+                }, 500)
+                this.$router.push('/')
+              }).catch(() => {
+                setTimeout(() => {
+                  this.loading = false
+                }, 500)
+              })
+            }
+          })
+        }
+      },
+      handleTabsChange (val) {
+        this.activeKey = val
+      },
+      saveLoginData (data) {
+        this.setToken(data.token)
+        this.setExpireTime(data.exipreTime)
+        this.setUser(data.user)
+        this.setPermissions(data.permissions)
+        this.setRoles(data.roles)
+        this.setTheme('light')
+        this.setLayout(data.config.layout)
+        this.setMultipage(data.config.multiPage === '1')
+        this.fixSiderbar(data.config.fixSiderbar === '1')
+        this.fixHeader(data.config.fixHeader === '1')
+        this.setColor(data.config.color)
       }
     }
   }
@@ -510,7 +728,7 @@
     color: white;
     font-size: 20px;
     font-weight: 600;
-    background-image: url("../../../assets/logo-bg.png");
+    background-image: url("../../../assets/images/logo-bg.png");
 
   }
 
@@ -558,7 +776,7 @@
   }
 
   .fixed-header-content {
-    margin: 20px 1px 0px !important;
+    margin: 0 0 !important;
   }
 
   .six6 {
@@ -622,7 +840,7 @@
 
   .logo-text {
     height: 100%;
-    background-image: url("../../../assets/logo-text.png");
+    background-image: url("../../../assets/images/logo-text.png");
     background-repeat: no-repeat;
     /*background-size: cover;*/
     background-position: center center;
@@ -643,7 +861,7 @@
     width: 140px;
     height: 52px;
     margin-top: 4px;
-    background-image: url("../../../assets/system-btn-start.png");
+    background-image: url("../../../assets/images/system-btn-start.png");
     background-repeat: no-repeat;
   }
 
@@ -652,7 +870,7 @@
     height: 52px;
     margin-top: 4px;
     margin-left: 15px;
-    background-image: url("../../../assets/system-btn-stop.png");
+    background-image: url("../../../assets/images/system-btn-stop.png");
     background-repeat: no-repeat;
   }
 
@@ -660,7 +878,7 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    right: 50px;
+    right: 15px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -676,13 +894,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-image: url("../../../assets/run-time-bg.png");
+    background-image: url("../../../assets/images/run-time-bg.png");
     background-repeat: no-repeat;
   }
 
   .card-item {
     flex: 1;
-    height: 281px;
+    height: 284px;
     background: #2d354e;
     padding: 0 !important;
     display: flex;
@@ -700,6 +918,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .card-item-title-red {
+    color: #dd2121;
+  }
+
+  .card-item-title-white {
+    color: #fff;
   }
 
   .card-item-title-underline {
@@ -781,13 +1007,13 @@
   }
 
   .item-no-bg {
-    background-image: url("../../../assets/item-no-bg.png");
+    background-image: url("../../../assets/images/item-no-bg.png");
     background-repeat: no-repeat;
     background-position: center center;
   }
 
   .scale-no-bg {
-    background-image: url("../../../assets/scale-no-bg.png");
+    background-image: url("../../../assets/images/scale-no-bg.png");
     background-repeat: no-repeat;
     background-position: center center;
   }
@@ -807,7 +1033,7 @@
     text-align: center;
     height: 48px;
     line-height: 48px;
-    background-image: url("../../../assets/order-header.png");
+    background-image: url("../../../assets/images/order-header.png");
     background-repeat: no-repeat;
     background-position: center center;
   }
@@ -845,7 +1071,7 @@
     text-align: center;
     height: 48px;
     line-height: 48px;
-    background-image: url("../../../assets/product-header.png");
+    background-image: url("../../../assets/images/product-header.png");
     background-repeat: no-repeat;
     background-position: center center;
   }
@@ -878,12 +1104,12 @@
   }
 
   /deep/ .ant-table-tbody > tr > td {
-    background: #2d354e !important;
+    /*background: #2d354e !important;*/
     color: #fff !important;
     font-size: 16px !important;
     border-bottom: none !important;
     max-height: 42px !important;
-    padding: 9px 16px !important;
+    padding: 11px 16px !important;
   }
 
   /deep/ .ant-table-wrapper {
@@ -896,21 +1122,21 @@
 
   .down-btn {
     height: 44px;
-    background-image: url("../../../assets/down-btn.png");
+    background-image: url("../../../assets/images/down-btn.png");
     background-repeat: no-repeat;
     background-position: center center;
   }
 
   .pause-btn {
     height: 44px;
-    background-image: url("../../../assets/pause-btn.png");
+    background-image: url("../../../assets/images/pause-btn.png");
     background-repeat: no-repeat;
     background-position: center center;
   }
 
   .shutdown-btn {
     height: 44px;
-    background-image: url("../../../assets/shutdown-btn.png");
+    background-image: url("../../../assets/images/shutdown-btn.png");
     background-repeat: no-repeat;
     background-position: center center;
   }
@@ -918,7 +1144,8 @@
   .btn-view {
     height: 82px;
     background: #252d43;
-    border-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
   }
 
   .material {
@@ -949,11 +1176,11 @@
   }
 
   .table-item-checked {
-    background: #2d9184 !important;
+    /*background: #2d9184 !important;*/
   }
 
   .table-item {
-    background: #2d354e !important;
+    /*background: #2d354e !important;*/
   }
 
   /deep/ .ant-table-tbody > tr.ant-table-row-selected td {
@@ -961,12 +1188,227 @@
   }
 
   .system-warning {
-    height: 62px;
-    line-height: 62px;
+    height: 58px;
+    line-height: 58px;
     font-size: 16px;
     text-align: center;
     color: #fff;
     background: #90181c;
+  }
+
+  /deep/ .ant-table-tbody > tr:hover:not(.ant-table-expanded-row) > td {
+    background: #2d9184 !important;;
+  }
+
+  /deep/ .ant-table-fixed-header .ant-table-scroll .ant-table-header {
+    background: #2d354e !important;
+  }
+
+  /deep/ .ant-table-fixed-header > .ant-table-content > .ant-table-scroll > .ant-table-body {
+    background: #2d354e !important;
+    overflow: auto !important;
+  }
+
+
+  /deep/ .ant-table-fixed-header > .ant-table-content > .ant-table-scroll > .ant-table-body::-webkit-scrollbar {
+    width: 8px;
+    border-radius: 20px;
+    /*width: 6px;*/
+    /*background-color: #F5F5F5;*/
+  }
+
+  /deep/ .ant-table-fixed-header > .ant-table-content > .ant-table-scroll > .ant-table-body::-webkit-scrollbar-track {
+    width: 8px;
+    background-image: url("../../../assets/images/scroll-bar-bg.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    border-radius: 20px;
+    /*border-radius: 6px;*/
+    /*background-color: #F5F5F5*/
+
+  }
+
+  /*/deep/ .ant-table-fixed-header > .ant-table-content > .ant-table-scroll > .ant-table-body::-webkit-scrollbar-track-piece {*/
+  /*  height: 367px;*/
+
+  /*}*/
+
+  /deep/ .ant-table-fixed-header > .ant-table-content > .ant-table-scroll > .ant-table-body::-webkit-scrollbar-thumb {
+    width: 20px;
+    background-image: url("../../../assets/images/scroll-bar-thumb.png");
+    background-repeat: no-repeat;
+    border-radius: 10px;
+    background-size: 100% 100%;
+    /*border-radius: 6px;*/
+    /*background-color: #000000;*/
+  }
+
+  /deep/ .ant-table-fixed-header .ant-table-scroll .ant-table-header::-webkit-scrollbar {
+    width: 0;
+  }
+
+  /deep/ .ant-popover-arrow {
+    background-color: #fafafa;
+  }
+
+  /deep/ .ant-popover-inner {
+    background-color: #fafafa;
+  }
+
+  /deep/ .ant-modal-content {
+    border-radius: 12px !important;
+  }
+
+  .login-form {
+    /*position: absolute;*/
+    /*right: 50px;*/
+    /*top: 44px;*/
+
+    .login-title {
+      width: 100%;
+      height: 32px;
+      background-image: url("../../../assets/images/login-title.png");
+      background-repeat: no-repeat;
+      /*background-size: 100% 100%;*/
+      background-position: center center;
+      margin-bottom: 28px;
+    }
+
+    .input-bg {
+      width: 210px;
+      height: 40px;
+    }
+
+    /deep/ .ant-input-lg {
+      font-size: 16px;
+      color: #3586df;
+      margin: 0 auto;
+      background-image: url("../../../assets/images/input-bg.png") !important;
+      background-repeat: no-repeat;
+      border-radius: 105px !important;
+      background-position: center center;
+    }
+
+    /deep/ .ant-input-lg::placeholder {
+      font-size: 16px;
+      color: #b4b4b4;
+    }
+
+    /deep/ .ant-btn-primary {
+      width: 130px;
+      height: 38px;
+      font-size: 20px !important;
+      background-color: #f9fafb;
+      border: none;
+      /*border-color: #f9fafb;*/
+      background-image: url("../../../assets/images/login-btn-bg.png");
+      background-repeat: no-repeat;
+      background-position: center center;
+      padding: 0 0;
+      text-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+
+    /deep/ .ant-btn-primary:hover, .ant-btn-primary:focus {
+      background-color: #f9fafb;
+      border-color: #f9fafb;
+      background-image: url("../../../assets/images/login-btn-bg.png");
+      background-repeat: no-repeat;
+      background-position: center center;
+      text-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+
+    .cancel {
+      width: 130px;
+      height: 38px;
+      font-size: 20px !important;
+      background-color: #f9fafb;
+      border: none;
+      /*border-color: #f9fafb;*/
+      background-image: url("../../../assets/images/cancel-btn-bg.png");
+      background-repeat: no-repeat;
+      background-position: center center;
+      padding: 0 0;
+      text-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+
+    .cancel :hover, .cancel:focus {
+      background-color: #f9fafb;
+      border-color: #f9fafb;
+      background-image: url("../../../assets/images/cancel-btn-bg.png");
+      background-repeat: no-repeat;
+      background-position: center center;
+      text-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+
+  }
+
+  .login-out-btn {
+    margin-top: 20px;
+    margin-bottom: 2px;
+
+    /deep/ .ant-btn-primary {
+      width: 130px;
+      height: 38px;
+      font-size: 20px !important;
+      background-color: #f9fafb;
+      text-align: center;
+      border: none;
+      /*border-color: #f9fafb;*/
+      background-image: url("../../../assets/images/login-btn-bg.png");
+      background-repeat: no-repeat;
+      background-position: center center;
+      padding: 0 0;
+      text-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+
+    /deep/ .ant-btn-primary:hover, .ant-btn-primary:focus {
+      background-color: #f9fafb;
+      border-color: #f9fafb;
+      background-image: url("../../../assets/images/login-btn-bg.png");
+      background-repeat: no-repeat;
+      background-position: center center;
+      text-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+
+    .cancel {
+      width: 130px;
+      height: 38px;
+      font-size: 20px !important;
+      background-color: #f9fafb;
+      text-align: center;
+      border: none;
+      /*border-color: #f9fafb;*/
+      background-image: url("../../../assets/images/cancel-btn-bg.png");
+      background-repeat: no-repeat;
+      background-position: center center;
+      padding: 0 0;
+      text-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+
+    .cancel :hover, .cancel:focus {
+      background-color: #f9fafb;
+      border-color: #f9fafb;
+      background-image: url("../../../assets/images/cancel-btn-bg.png");
+      background-repeat: no-repeat;
+      background-position: center center;
+      text-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
   }
 
 </style>

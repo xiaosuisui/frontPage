@@ -27,13 +27,15 @@ export default {
       'rgb(47, 84, 235)',
       'rgb(114, 46, 209)'
     ],
-    color: db.get('COLOR', 'rgb(24, 144, 255)')
+    color: db.get('COLOR', 'rgb(24, 144, 255)'),
+    plc: 0
   },
   mutations: {
     setDevice (state, isMobile) {
       state.isMobile = isMobile
     },
     setTheme (state, theme) {
+      console.log(theme)
       db.save('THEME', theme)
       state.theme = theme
     },
@@ -62,6 +64,9 @@ export default {
     setColor (state, color) {
       db.save('COLOR', color)
       state.color = color
+    },
+    setPlc (state, status) {
+      state.plc = status
     }
   }
 }

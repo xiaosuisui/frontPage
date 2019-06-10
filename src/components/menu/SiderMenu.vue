@@ -69,7 +69,7 @@ export default {
     &.light {
       background-color: #fff;
     }
-    &.dark {
+    &.light {
       background-color: #393e46;
     }
     &.ant-fixed-sidemenu {
@@ -89,7 +89,7 @@ export default {
         background-color: #fff;
         border-bottom: 1px solid #f8f8f8;
       }
-      &.dark {
+      &.light {
         background-color: #393e46;
         h1 {
           color: #fff;

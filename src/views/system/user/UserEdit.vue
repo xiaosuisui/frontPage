@@ -1,13 +1,11 @@
 <template>
-  <a-drawer
+  <a-modal
     title="修改用户"
     :maskClosable="false"
-    width=650
-    placement="right"
-    :closable="false"
-    @close="onClose"
+    :width="650"
     :visible="userEditVisiable"
-    style="height: calc(100% - 55px);overflow: auto;padding-bottom: 53px;">
+    :centered="true"
+    @cancel="onClose">
     <a-form :form="form">
       <a-form-item label='用户名' v-bind="formItemLayout">
         <a-input readOnly v-decorator="['username']"/>
@@ -73,11 +71,11 @@
     </a-form>
     <div class="drawer-bootom-button">
       <a-popconfirm title="确定放弃编辑？" @confirm="onClose" okText="确定" cancelText="取消">
-        <a-button style="margin-right: .8rem">取消</a-button>
+        <a-button>取消</a-button>
       </a-popconfirm>
       <a-button @click="handleSubmit" type="primary" :loading="loading">提交</a-button>
     </div>
-  </a-drawer>
+  </a-modal>
 </template>
 <script>
 import {mapState, mapMutations} from 'vuex'

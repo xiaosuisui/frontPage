@@ -33,6 +33,7 @@ let asyncRouter
 
 // 导航守卫，渲染动态路由
 router.beforeEach((to, from, next) => {
+  console.log(asyncRouter);
   if (whiteList.indexOf(to.path) !== -1) {
     next()
   }
@@ -43,6 +44,7 @@ router.beforeEach((to, from, next) => {
     if (!asyncRouter) {
       if (!userRouter) {
         request.get(`menu/${user.username}`).then((res) => {
+          res.data[0].redirect = '/function/monitor'
           asyncRouter = res.data
           save('USER_ROUTER', asyncRouter)
           go(to, next)
