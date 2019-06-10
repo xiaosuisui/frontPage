@@ -36,22 +36,31 @@
   import {mapState} from 'vuex'
   import ARow from 'ant-design-vue/es/grid/Row'
   import ACol from 'ant-design-vue/es/grid/Col'
-
+  const plc=1
   export default {
     name: 'GlobalHeader',
     components: {ACol, ARow, IMenu, HeaderAvatar},
     props: ['collapsed', 'menuData'],
     data () {
+      console.log(this.$store.state.plc)
       return {
-        // plc: 1,
+        plc: 1,
         date: new Date(),
-        timer: null
+        timer: null,
+        plcRequest:null
       }
     },
     mounted () {
       this.timer = setInterval(() => {
         this.date = new Date()
-      }, 1000)
+      }, 1000),
+        //获取PLC状态
+        this.plcRequest=setInterval(()=>{
+          this.$get('formular/plc').then((r) => {
+            this.plc=r.data
+            console.log("plc"+this.plc)
+          })
+        },20000)
     },
     computed: {
       getDate () {
@@ -68,12 +77,11 @@
         layout: state => state.setting.layout,
         systemName: state => state.setting.systemName,
         sidebarOpened: state => state.setting.sidebar.opened,
-        fixHeader: state => state.setting.fixHeader,
-        plc: state => state.setting.plc
+        fixHeader: state => state.setting.fixHeader
       }),
       theme () {
         return this.layout === 'side' ? 'light' : this.$store.state.setting.theme
-      },
+      }
     },
     methods: {
       toggleCollapse () {
@@ -110,6 +118,9 @@
     beforeDestroy () {
       if (this.timer) {
         clearInterval(this.timer)
+      }
+      if(this.plcRequest){
+        clearInterval(this.plcRequest)
       }
     }
   }

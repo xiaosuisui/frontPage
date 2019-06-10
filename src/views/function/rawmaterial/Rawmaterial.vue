@@ -311,7 +311,6 @@
         const pagination = { ...this.pagination }
         pagination.total = data.total
         this.dataSource = data.rows
-        console.log(this.dataSource)
         this.pagination = pagination
         // 数据加载完毕，关闭loading
         this.loading = false

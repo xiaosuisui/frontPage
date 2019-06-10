@@ -1,5 +1,5 @@
 <template>
-  <div style="background:#1d2437;padding: 0; width:100%;height:100%;">
+  <div style="background:#1d2437;padding: 0; width:100%;height:100%;" class="homeStyle">
     <!-- 头部-->
     <a-row>
       <a-col :span="24">
@@ -16,7 +16,7 @@
               <img src="../../../assets/images/run-time.png"/>&nbsp;
             </div>
             <div style="font-size: 16px;color: #0f7291">运行时长</div>&nbsp;
-            <div class="run-timer-bg">10</div>&nbsp;
+            <div class="run-timer-bg">{{plcRunTime}}</div>&nbsp;
             <div style="font-size: 16px;color: #0f7291">分钟</div>
           </div>
           <div class="run-timer">
@@ -64,33 +64,9 @@
             <div class="card-item-title card-item-title-underline"><span>{{monitor.rawmaterialName?monitor.rawmaterialName:'空'}}</span>
             </div>
             <div class="card-item-title card-item-title-underline"><span
-              :class="reserves(monitor.currentWeight)">{{monitor.currentWeight}}</span></div>
+              :class="reserves(monitor.currentWeight,monitor.warnWeight)">{{monitor.currentWeight}}</span></div>
             <div class="card-item-title"><span>{{monitor.standardWeight?monitor.standardWeight:0}}</span></div>
-            <!--            <a-card hoverable :bordered=true>-->
-            <!--              <template class="ant-card-actions" slot="actions">-->
-            <!--                <div class="item-text">-->
-            <!--                  <div style="height: 25px;"></div>-->
-            <!--                  <span>存量:</span>-->
-            <!--                  <span><a-tag color="#174703" style="font-weight: bold;font-size: 14px;color: white;"></a-tag>-->
-            <!--							 					</span>-->
-            <!--                  <div style="height: 15px;"></div>-->
-            <!--                  <span>配方:</span>-->
-            <!--                  <span>-->
-            <!--							 						<a-tag color="#174703" style="font-weight: bold;font-size: 14px;color: white;"></a-tag>-->
-            <!--							 					</span>-->
-            <!--                </div>-->
 
-            <!--              </template>-->
-            <!--              <div style="text-align: right;">-->
-            <!--                <img class="lock" :src="[monitor.status==0?'./static/img/lock.jpg':'./static/img/lock2.jpg']"/>-->
-            <!--              </div>-->
-            <!--              <div style="margin-left:-20px;margin-right: -20px;text-align: center;">-->
-            <!--                <span style="color: white;"></span>-->
-            <!--              </div>-->
-            <!--              <div class="tubiao">-->
-            <!--                <a-avatar class="project-avatar"></a-avatar>-->
-            <!--              </div>-->
-            <!--            </a-card>-->
           </a-col>
         </a-row>
         <div style="margin-top:5px;"></div>
@@ -114,36 +90,6 @@
             <div class="card-item-title card-item-title-underline"><span
               :class="reserves(monitor.currentWeight)">{{monitor.currentWeight}}</span></div>
             <div class="card-item-title"><span>{{monitor.standardWeight?monitor.standardWeight:0}}</span></div>
-
-            <!--          <a-col :class="colClass" v-for="(monitor, index) in monitorDouble" :key="index">-->
-            <!--            <a-card hoverable :bordered=true>-->
-            <!--              <template class="ant-card-actions," slot="actions">-->
-            <!--                <div class="item-text">-->
-            <!--                  <div style="height: 25px;"></div>-->
-            <!--                  <span>存量:</span>-->
-            <!--                  <span><a-tag color="#174703" style="font-weight: bold;font-size: 14px;color: white;">{{monitor.currentWeight}}</a-tag>-->
-            <!--							 					</span>-->
-            <!--                  <div style="height: 15px;"></div>-->
-            <!--                  <span>配方:</span>-->
-            <!--                  <span>-->
-            <!--							 						<a-tag color="#174703" style="font-weight: bold;font-size: 14px;color: white;">{{monitor.standardWeight?monitor.standardWeight:0}}</a-tag>-->
-            <!--							 					</span>-->
-            <!--                  &lt;!&ndash;							 					存量:-->
-            <!--                                                                       <a-tag color="#174703" style="font-weight: bold;font-size: 14px;color: white;">{{monitor.currentWeight}}</a-tag>-->
-            <!--                                                                       <br>-->
-            <!--                                                                       配方:	<a-tag color="#174703" style="font-weight: bold;font-size: 14px;color: white;">{{monitor.standardWeight?monitor.standardWeight:0}}</a-tag>&ndash;&gt;-->
-            <!--                </div>-->
-            <!--              </template>-->
-            <!--              <div style="text-align: right;">-->
-            <!--                <img class="lock" :src="[monitor.status==0?'./static/img/lock.jpg':'./static/img/lock2.jpg']"/>-->
-            <!--              </div>-->
-            <!--              <div style="margin-left:-20px;margin-right: -20px;text-align: center;">-->
-            <!--                <span style="color: white;">{{monitor.rawmaterialName?monitor.rawmaterialName:'空'}}</span>-->
-            <!--              </div>-->
-            <!--              <div class="tubiao">-->
-            <!--                <a-avatar class="project-avatar">{{monitor.warehouseNo}}</a-avatar>-->
-            <!--              </div>-->
-            <!--            </a-card>-->
           </a-col>
         </a-row>
 
@@ -162,18 +108,7 @@
             </div>
             <div class="scale-item-title"><span>{{monitor.nowWeight?monitor.nowWeight:0}}</span></div>
           </a-col>
-          <!--          <a-col :class="colClass" v-for="(monitor, index) in monitorWeight" :key="index">-->
-          <!--            <a-card hoverable :bordered=true>-->
-          <!--              <template class="ant-card-actions" slot="actions">-->
-          <!--							 			<span class="item-text">-->
-          <!--							 				<a-tag color="#174703" style="font-weight: bold;font-size: 14px; color: white;">{{monitor.nowWeight?monitor.nowWeight:0}}</a-tag>-->
-          <!--							 			</span>-->
-          <!--              </template>-->
-          <!--              <div class="tubiao">-->
-          <!--                <a-avatar class="project-avatar">{{monitor.weightNo}}</a-avatar>-->
-          <!--              </div>-->
-          <!--            </a-card>-->
-          <!--          </a-col>-->
+
         </a-row>
         <!--当前执行的工单-->
         <div style="margin-top: 5px"></div>
@@ -211,12 +146,6 @@
                        :scroll="{y:460}"
                        :customRow="customRow"
               >
-                <!--                       :rowSelection="{type:'radio',selectedRowKeys:selectedRowKeys,onChange: onSelectChange}"-->
-                <!--                <template slot="operation" slot-scope="text, record">-->
-                <!--                  <a-popconfirm title="确定下载工单么?" @confirm="download(record)" okText="确定" cancelText="取消">-->
-                <!--                    <a-icon type="download" title="下载工单"></a-icon>-->
-                <!--                  </a-popconfirm>-->
-                <!--                </template>-->
                 <template slot="title" slot-scope="currentPageData">
                   <div class="product-header">
                     生产排程表
@@ -230,10 +159,10 @@
               <div class="down-btn" @click="showConfirm()"></div>
             </a-col>
             <a-col :span="8">
-              <div class="pause-btn"></div>
+              <div @click="stop()" class="pause-btn"></div>
             </a-col>
             <a-col :span="8">
-              <div class="shutdown-btn"></div>
+              <div @click="shutdown()" class="shutdown-btn"></div>
             </a-col>
           </a-row>
           <a-row class="material">
@@ -253,7 +182,7 @@
     </a-row>
     <a-row style="margin:10px 0">
       <a-col :span="24" class="system-warning">
-        <a-icon type="warning"/>&nbsp;<span>系统警告提示:</span>&nbsp;<span>12号螺旋电机过载</span>
+        <a-icon type="warning"/>&nbsp;<span>系统警告提示:</span>&nbsp;<span>无报警</span>
       </a-col>
     </a-row>
     <a-modal
@@ -335,14 +264,8 @@
   import Icons from '../../system/menu/Icons'
   import ACol from 'ant-design-vue/es/grid/Col'
   import ARow from 'ant-design-vue/es/grid/Row'
-
+  import HeadInfo from '@/views/common/HeadInfo'
   const columns = [
-    // {
-    //   title: '下载',
-    //   dataIndex: 'operation',
-    //   align: 'center',
-    //   scopedSlots: {customRender: 'operation'}
-    // },
     {
       title: '序号',
       dataIndex: 'index',
@@ -381,9 +304,10 @@
   const monitorDouble = []
   const colClass = 'six6'
   const monitorWeight = []
+  const plcRunTime =0
   export default {
     name: 'Monitor',
-    components: {ARow, ACol, Icons},
+    components: {ARow, ACol, Icons,HeadInfo},
     data () {
       return {
         monitorSingle,
@@ -395,10 +319,12 @@
         selectedRows: [],
         selectedRow: {},
         colClass: 'six6',
+        plcRunTime:'0',
         stompClient: '',
         timer: '',
         selectedProduction: null,
-        material_code: ['WPBS20190513180788', 'WPBS20190513180788', 'WPBS20190513180788', 'WPBS20190513180788', 'WPBS20190513180788'],
+        runTimeReq:null,
+        material_code: ['碳酸氢铵1117155684519196116845981', 'WPBS20190513180788', 'WPBS20190513180788', 'WPBS20190513180788', 'WPBS20190513180788'],
         modalStatus: false,
         bodyStyle: {
           width: '360px',
@@ -423,11 +349,17 @@
       this.getData()//初始化列
       this.getFormula()//初始化数据库的数据
       this.initWebSocket()
+      this.runTimeReq=setInterval(()=>{
+        this.$get('formular/runTime').then((r) => {
+          this.plcRunTime=r.data
+        })
+      },60000)
     },
     computed: {
       reserves () {
-        return (num) => {
-          if (num > 300) {
+        return (num,num1) => {
+          console.log(num1)
+          if (num >num1) {
             return 'card-item-title-white'
           }
           return 'card-item-title-red'
@@ -458,26 +390,14 @@
       // 页面离开时断开连接,清除定时器
       this.disconnect()
       clearInterval(this.timer)
+      if(this.runTimeReq){
+        clearInterval(this.runTimeReq)
+      }
     },
     methods: {
-      ...mapMutations({
-        setToken: 'account/setToken',
-        setExpireTime: 'account/setExpireTime',
-        setPermissions: 'account/setPermissions',
-        setRoles: 'account/setRoles',
-        setUser: 'account/setUser',
-        setTheme: 'setting/setTheme',
-        setLayout: 'setting/setLayout',
-        setMultipage: 'setting/setMultipage',
-        fixSiderbar: 'setting/fixSiderbar',
-        fixHeader: 'setting/fixHeader',
-        setColor: 'setting/setColor',
-        setPlc: 'setting/setPlc'
-      }),
       initWebSocket () {
         this.connection()
         let that = this
-        this.setPlc(1)
       },
       onSelectChange (selectedRowKeys, selectedRows) {
         console.log('selectedRowKeys changed: ', selectedRowKeys, selectedRows)
@@ -485,7 +405,7 @@
       },
       connection () {
         // 建立连接对象
-        let socket = new SockJS('http://101.132.139.133:9527/webSocketServer')
+        let socket = new SockJS('http://127.0.0.1:9527/webSocketServer')
         // 获取STOMP子协议的客户端对象
         this.stompClient = Stomp.over(socket)
         // 定义客户端的认证信息,按需求配置
@@ -511,6 +431,38 @@
               const tempHouseInfo = this.monitorDouble[indexNo]
               tempHouseInfo.currentWeight = parseInt(tempHouseInfo.currentWeight) + parseInt(repObj.rawmaterialWeight)
             }
+          })
+          this.stompClient.subscribe('/topic/monitor/warehouseWeightLess',(msg)=>{
+            const repObj=JSON.parse(msg.body)
+            const houseNo =parseInt(repObj.warehouseDetailName)
+            if(houseNo %2 ==1){//表明是奇数
+              let indexNo=(houseNo-1)/2
+              const tempHouseInfo =this.monitorSingle[indexNo]
+              tempHouseInfo.currentWeight=parseInt(tempHouseInfo.currentWeight)-parseInt(repObj.rawmaterialWeight)
+            }else if(houseNo %2 ==0){
+              let indexNo=houseNo /2 -1
+              const tempHouseInfo = this.monitorDouble[indexNo]
+              tempHouseInfo.currentWeight = parseInt(tempHouseInfo.currentWeight)-parseInt(repObj.rawmaterialWeight)
+            }
+          })
+          this.stompClient.subscribe('/topic/monitor/fornumarFinish',(msg)=>{
+            this.getFormula()
+          })
+
+          this.stompClient.subscribe('/topic/monitor/weight',(msg)=>{
+            let data= JSON.parse(msg.body)
+            this.monitorWeight[data.index].nowWeight=data.weight
+          })
+
+          this.stompClient.subscribe('/topic/monitor/barcode',(msg)=>{//新的条码的信息的扫描
+            let data=JSON.parse(msg.body)
+            this.material_code=data
+
+          })
+
+          this.stompClient.subscribe('/topic/monitor/currentBatchNo',(msg)=>{//更新当前的生产批次
+            const repObj=JSON.parse(msg.body)
+            this.selectedRow.currentBatch=repObj.currentBatch
           })
           this.stompClient.subscribe('/topic/monitor/warehouseStatus', (msg) => { // 订阅服务端提供的某个topic
             const repObj = JSON.parse(msg.body)
@@ -576,9 +528,17 @@
           this.$message.success('工单' + record.name + '启动成功')
         })
       },
+      //暂停
       stop () {
         this.$get('formular/stop').then((r) => {
-          this.$message.success('工单' + record.name + '启动成功')
+          this.getFormula()
+          this.$message.success('工单' + record.name + '暂停成功')
+        })
+      },
+      //guang
+      shutdown(){
+        this.$get('formular/shutdown').then((r) => {
+          this.$message.success('系统关机')
         })
       },
       getData () {
@@ -667,6 +627,19 @@
       handleTabsChange (val) {
         this.activeKey = val
       },
+      ...mapMutations({
+        setToken: 'account/setToken',
+        setExpireTime: 'account/setExpireTime',
+        setPermissions: 'account/setPermissions',
+        setRoles: 'account/setRoles',
+        setUser: 'account/setUser',
+        setTheme: 'setting/setTheme',
+        setLayout: 'setting/setLayout',
+        setMultipage: 'setting/setMultipage',
+        fixSiderbar: 'setting/fixSiderbar',
+        fixHeader: 'setting/fixHeader',
+        setColor: 'setting/setColor'
+      }),
       saveLoginData (data) {
         this.setToken(data.token)
         this.setExpireTime(data.exipreTime)
@@ -1409,6 +1382,11 @@
       -webkit-box-shadow: none;
       box-shadow: none;
     }
+  }
+  .homeStyle{
+    height:100%;
+    margin:0;
+    padding: 44px 0 0 0 !important;
   }
 
 </style>

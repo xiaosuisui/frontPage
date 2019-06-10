@@ -89,7 +89,7 @@ export default {
     },
     setFormValues ({...warehousedetail}) {
     	this.warehouseDetailId=warehousedetail.warehouseDetailId
-      let fields = ['warehouseDetailName','rawmaterialName', 'rawmaterialNo','currentWeight','warnWeight','quantity']
+      let fields = ['warehouseDetailName','rawmaterialName', 'rawmaterialNo','rawmaterialWeight','warnWeight','quantity']
       Object.keys(warehousedetail).forEach((key) => {
         if (fields.indexOf(key) !== -1) {
           this.form.getFieldDecorator(key)

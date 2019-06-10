@@ -1,8 +1,8 @@
 <template>
 	<a-card :bordered="false" class="card-area">
-	<a-button class="editable-add-btn" type="primary" @click="handleAdd">Add</a-button>
+	<a-button class="editable-add-btn" type="primary" @click="handleAdd">添加配方</a-button>
 	<div style="margin-top: 10px;"></div>
-     <a-table ref="TableInfo" :columns="columns" :dataSource="data" :scroll="{ x: 1600}" 
+     <a-table ref="TableInfo" :columns="columns" :dataSource="data" :scroll="{ x: 1500}" 
      	  :pagination="pagination"
           :loading="loading" size="small" @change="handleTableChange"
           bordered>
@@ -33,13 +33,13 @@
 	      <div class='editable-row-operations'>
 	      	<span v-if='record.key!=999999'>
 		        <span v-if="record.editable">
-		          <a @click="() => save(record.key)">Save</a>
+		          <a @click="() => save(record.key)">保存</a>
 		          <a-popconfirm title='Sure to cancel?' @confirm="() => cancel(record.key)">
-		            <a>Cancel</a>
+		            <a>取消</a>
 		          </a-popconfirm>
 		        </span>
 		        <span v-else>
-		          <a @click="() => edit(record.key)">Edit</a>
+		          <a @click="() => edit(record.key)">编辑</a>
 		        </span>
 		    </span>    
 	      </div>
@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import {mapState } from 'vuex'
 const columns = []
 const data = []
 const dataLength=''//当前模板的类型
@@ -78,6 +79,11 @@ export default {
 	this.getColumns()//初始化列
 	this.fetch()//初始化数据库的数据
   },
+  computed: {
+    ...mapState({
+      user: state => state.account.user
+    })},
+   
   methods: {
     handleChange (value, key, column) {
       const newData = [...this.data]
@@ -139,14 +145,14 @@ export default {
            initData[`house0${i}`]=detailData[i-1]['rawmaterialName']
            this.editColumns.push(`house0${i}`)
          }
-         column.push({title: '工单名称',dataIndex: 'formulaName',scopedSlots: { customRender: 'formulaName'},fixed:'right',width:100})
-         column.push({title: '批次',dataIndex: 'batchNo',scopedSlots: { customRender: 'batchNo'},fixed:'right',width:60})
-         column.push({title: '差值',dataIndex: 'offsetValue',scopedSlots: { customRender: 'offsetValue'},fixed:'right',width:60})
+         column.push({title: '配方名称',dataIndex: 'formulaName',scopedSlots: { customRender: 'formulaName'},fixed:'right',width:100})
+        // column.push({title: '批次',dataIndex: 'batchNo',scopedSlots: { customRender: 'batchNo'},fixed:'right',width:60})
+        // column.push({title: '差值',dataIndex: 'offsetValue',scopedSlots: { customRender: 'offsetValue'},fixed:'right',width:60})
          column.push({title: '操作', dataIndex: 'operation',scopedSlots: { customRender: 'operation'},fixed:'right',width:60})
      	 this.columns=column
      	 this.editColumns.push(`formulaName`)
-     	 this.editColumns.push(`batchNo`)
-     	 this.editColumns.push(`offsetValue`)
+     	// this.editColumns.push(`batchNo`)
+     	// this.editColumns.push(`offsetValue`)
      	 initData.editable=false;//
      	 this.data.push(initData)
       })
@@ -173,18 +179,17 @@ export default {
       const filterData = [...this.data]
       const target = filterData.filter(item => '' === item.key)[0]
       if(target){
-     	console.log("请先保存")
+     	this.$message.error("请先保存配方")
      	return
       }
       const {data } = this
       const newData={front:``,key:``}
       for(let i=1;i<=this.columns.length;i++){newData[`house0${i}`]=``}
       newData[`formulaName`]=``
-      newData[`batchNo`]=``
-      newData[`offsetValue`]=``
+     // newData[`batchNo`]=``
+     // newData[`offsetValue`]=``
 	  this.data.splice(1, 0, newData);
      // this.data = [...data, newData]
-      console.log(this.data)
     },
     edit (key) {
       const newData = [...this.data]
@@ -201,15 +206,17 @@ export default {
       	//储存入库
       	target['warehouseType']=`${this.dataLength}类型 `
       	target['status']='0'
+      	target['operator']=this.user.username
       	 this.$post('formular', {
             ...target
           }).then((r) => {
-          	 
+          	 delete target.editable
+       		 this.data = newData
+        	this.cacheData = newData.map(item => ({ ...item }))
+       	 	this.fetch()
           }).catch(() => {
           })
-        delete target.editable
-        this.data = newData
-        this.cacheData = newData.map(item => ({ ...item }))
+ 
       }
     },
     cancel (key) {
