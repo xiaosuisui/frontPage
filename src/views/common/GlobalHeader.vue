@@ -17,50 +17,145 @@
         <a-row>
           <a-col
             style="font-size: 14px;line-height: 44px;text-align: center;height: 44px;display: flex;flex-direction: row;align-items: center">
-            <span :style="{color:plc===1?'#00d48d':'#dd2121'}">PLC通讯</span>
-            <img :src="[plc === 1?'./static/img/plc-on.gif':'./static/img/plc-off.png']" alt=""
-                 style="margin-left: 10px">
             <span style="margin-left: 32px;color: #6e6e6e;">{{getDate}}</span>
             <span style="margin-left: 12px;color: #6e6e6e;">{{getTime}}</span>
             <span style="margin-left: 12px; margin-right:32px;color: #6e6e6e;">{{getDay}}</span>
+            <span style="line-height: 44px">
+                <img src="../../assets/images/user-icon.png"/>&nbsp;
+              </span>
+            <span style="font-size: 14px;color:#6e6e6e;line-height: 44px;margin-left:5px">用户昵称</span>&nbsp;
+            <span class="run-timer-bg" style="line-height: 44px;margin-left: 5px;">{{user.username}}</span>&nbsp;&nbsp;
+            <span style="margin-right: 12px;line-height: 44px">
+              <a-popover placement="bottomRight" trigger="click" v-model="visible">
+                <template slot="content">
+                  <p style="margin: 10px;font-size: 18px;color: #6d6d6d"
+                     @click="switchAccount()" class="menu-hover">切换账号</p>
+                  <div
+                    style=" width:70%;height: 1px;background:rgba(0, 0, 0, 0.1); margin: 0 auto"></div>
+                  <p style="margin: 10px;font-size: 18px;color: #6d6d6d"
+                     @click="loginOut()" class="menu-hover">退出登录</p>
+                </template>
+                <img src="../../assets/images/btn-popover.png" @click="popoverShow()"/>&nbsp;
+              </a-popover>
+            </span>
           </a-col>
         </a-row>
       </div>
     </div>
+    <a-modal
+      :visible="modalStatus"
+      :closable="false"
+      :footer="null"
+      :bodyStyle="bodyStyle"
+      :centered="true"
+      :width="360"
+      @cancel="() => setModalVisible(false)"
+    >
+      <a-form @submit.prevent="doLogin" :form="form" class="login-form">
+        <div class="login-title"></div>
+        <a-form-item
+          style="display: flex; justify-content: center;align-items: center">
+          <a-input size="large" class="input-bg" placeholder="请输入用户名"
+          v-decorator="[
+          'name',
+          {rules: [{ required: true, message: '请输入用户名', whitespace: true}]}
+          ]"
+          >
+            <a-icon slot="prefix" type="user" style="color:#3586df"></a-icon>
+          </a-input>
+        </a-form-item>
+        <a-form-item
+          style="display: flex; justify-content: center;align-items: center">
+          <a-input size="large" type="password" class="input-bg" placeholder="请输入密码"
+          v-decorator="[
+          'password',
+          {rules: [{ required: true, message: '请输入密码', whitespace: true}]}
+          ]"
+          >
+            <a-icon slot="prefix" type="lock" style="color:#3586df"></a-icon>
+          </a-input>
+        </a-form-item>
+        <a-row type="flex" justify="space-around">
+          <a-col :span="10">
+            <a-button :loading="loading" size="large" htmlType="submit" type="primary">
+              登录
+            </a-button>
+          </a-col>
+          <a-col :span="10">
+            <a-button size="large" type="primary" @click="setModalVisible(false)" class="cancel">
+              取消
+            </a-button>
+          </a-col>
+        </a-row>
+      </a-form>
+    </a-modal>
+    <a-modal
+      :visible="modalLoginOutStatus"
+      :closable="false"
+      :footer="null"
+      :bodyStyle="bodyStyleLoginOut"
+      :centered="true"
+      :width="360"
+      @cancel="() => setModalLoginOutVisible(false)"
+    >
+      <a-row style="margin-top: 6px">
+        <a-col :span="24" style="font-size: 28px;color: #28988a;text-align: center">温馨提示</a-col>
+      </a-row>
+      <a-row style="margin-top: 30px">
+        <a-col :span="24" style="font-size: 22px;color: #28988a;text-align: center">您是否要退出该账号?</a-col>
+      </a-row>
+      <a-row type="flex" justify="space-around" class="login-out-btn">
+        <a-col :span="10">
+          <a-button size="large" type="primary" @click="doLoginOut()">
+            确定
+          </a-button>
+        </a-col>
+        <a-col :span="10">
+          <a-button size="large" type="primary" @click="setModalLoginOutVisible(false)" class="cancel">
+            取消
+          </a-button>
+        </a-col>
+      </a-row>
+    </a-modal>
   </a-layout-header>
 </template>
 
 <script>
   import HeaderAvatar from './HeaderAvatar'
   import IMenu from '@/components/menu/menu'
-  import {mapState} from 'vuex'
+  import {mapState, mapMutations} from 'vuex'
   import ARow from 'ant-design-vue/es/grid/Row'
   import ACol from 'ant-design-vue/es/grid/Col'
-  const plc=1
+
   export default {
     name: 'GlobalHeader',
     components: {ACol, ARow, IMenu, HeaderAvatar},
     props: ['collapsed', 'menuData'],
     data () {
-      console.log(this.$store.state.plc)
       return {
-        plc: 1,
         date: new Date(),
         timer: null,
-        plcRequest:null
+        modalStatus: false,
+        bodyStyle: {
+          width: '360px',
+          height: '280px',
+        },
+        bodyStyleLoginOut: {
+          width: '360px',
+          height: '210px'
+        },
+        visible: false,
+        loading: false,
+        modalLoginOutStatus: false,
+        activeKey: '1',
+        error: '',
+        form: this.$form.createForm(this)
       }
     },
     mounted () {
       this.timer = setInterval(() => {
         this.date = new Date()
-      }, 1000),
-        //获取PLC状态
-        this.plcRequest=setInterval(()=>{
-          this.$get('formular/plc').then((r) => {
-            this.plc=r.data
-            console.log("plc"+this.plc)
-          })
-        },20000)
+      }, 1000)
     },
     computed: {
       getDate () {
@@ -77,7 +172,8 @@
         layout: state => state.setting.layout,
         systemName: state => state.setting.systemName,
         sidebarOpened: state => state.setting.sidebar.opened,
-        fixHeader: state => state.setting.fixHeader
+        fixHeader: state => state.setting.fixHeader,
+        user: state => state.account.user
       }),
       theme () {
         return this.layout === 'side' ? 'light' : this.$store.state.setting.theme
@@ -113,14 +209,90 @@
         } else if (num === 6) {
           return '六'
         }
+      },
+      popoverShow () {
+        this.visible = !this.visible
+      },
+      // 登出
+      loginOut () {
+        this.visible = false
+        this.setModalLoginOutVisible(true)
+      },
+      doLoginOut () {
+        this.$router.push('/login')
+      },
+      // 切换账号
+      switchAccount () {
+        this.visible = false
+        this.setModalVisible(true)
+      },
+      setModalVisible (modalStatus) {
+        this.modalStatus = modalStatus
+      },
+      setModalLoginOutVisible (modalStatus) {
+        this.modalLoginOutStatus = modalStatus
+      },
+      doLogin () {
+        if (this.activeKey === '1') {
+          // 用户名密码登录
+          this.form.validateFields(['name', 'password'], (errors, values) => {
+            if (!errors) {
+              this.loading = true
+              let name = this.form.getFieldValue('name')
+              let password = this.form.getFieldValue('password')
+              this.$post('login', {
+                username: name,
+                password: password
+              }).then((r) => {
+                let data = r.data.data
+                this.saveLoginData(data)
+                this.setModalVisible(false)
+                setTimeout(() => {
+                  this.loading = false
+                }, 500)
+                this.$router.push('/')
+              }).catch(() => {
+                setTimeout(() => {
+                  this.loading = false
+                }, 500)
+              })
+            }
+          })
+        }
+      },
+      handleTabsChange (val) {
+        this.activeKey = val
+      },
+      ...mapMutations({
+        setToken: 'account/setToken',
+        setExpireTime: 'account/setExpireTime',
+        setPermissions: 'account/setPermissions',
+        setRoles: 'account/setRoles',
+        setUser: 'account/setUser',
+        setTheme: 'setting/setTheme',
+        setLayout: 'setting/setLayout',
+        setMultipage: 'setting/setMultipage',
+        setFixSiderbar: 'setting/fixSiderbar',
+        setFixHeader: 'setting/fixHeader',
+        setColor: 'setting/setColor'
+      }),
+      saveLoginData (data) {
+        this.setToken(data.token)
+        this.setExpireTime(data.exipreTime)
+        this.setUser(data.user)
+        this.setPermissions(data.permissions)
+        this.setRoles(data.roles)
+        this.setTheme('light')
+        this.setLayout(data.config.layout)
+        this.setMultipage(data.config.multiPage === '1')
+        this.setFixSiderbar(data.config.fixSiderbar === '1')
+        this.setFixHeader(data.config.fixHeader === '1')
+        this.setColor(data.config.color)
       }
     },
     beforeDestroy () {
       if (this.timer) {
         clearInterval(this.timer)
-      }
-      if(this.plcRequest){
-        clearInterval(this.plcRequest)
       }
     }
   }
@@ -236,6 +408,187 @@
     &.ant-header-side-closed {
       width: 100%;
       padding-left: 80px;
+    }
+  }
+
+  .run-timer-bg {
+    font-size: 16px;
+    width: 100px;
+    height: 28px;
+    color: #fff;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url("../../assets/images/user-nick.png");
+    background-repeat: no-repeat;
+  }
+
+  /deep/ .ant-popover-arrow {
+    background-color: #fafafa;
+  }
+
+  /deep/ .ant-popover-inner {
+    background-color: #fafafa;
+  }
+
+  /deep/ .ant-modal-content {
+    border-radius: 12px !important;
+  }
+
+  .login-form {
+    /*position: absolute;*/
+    /*right: 50px;*/
+    /*top: 44px;*/
+
+    .login-title {
+      width: 100%;
+      height: 32px;
+      background-image: url("../../assets/images/login-title.png");
+      background-repeat: no-repeat;
+      /*background-size: 100% 100%;*/
+      background-position: center center;
+      margin-bottom: 28px;
+    }
+
+    .input-bg {
+      width: 210px;
+      height: 40px;
+    }
+
+    /deep/ .ant-input-lg {
+      font-size: 16px;
+      color: #3586df;
+      margin: 0 auto;
+      background-image: url("../../assets/images/input-bg.png") !important;
+      background-repeat: no-repeat;
+      border-radius: 105px !important;
+      background-position: center center;
+    }
+
+    /deep/ .ant-input-lg::placeholder {
+      font-size: 16px;
+      color: #b4b4b4;
+    }
+
+    /deep/ .ant-btn-primary {
+      width: 130px;
+      height: 38px;
+      font-size: 20px !important;
+      background-color: #f9fafb;
+      border: none;
+      /*border-color: #f9fafb;*/
+      background-image: url("../../assets/images/login-btn-bg.png");
+      background-repeat: no-repeat;
+      background-position: center center;
+      padding: 0 0;
+      text-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+
+    /deep/ .ant-btn-primary:hover, .ant-btn-primary:focus {
+      background-color: #f9fafb;
+      border-color: #f9fafb;
+      background-image: url("../../assets/images/login-btn-bg.png");
+      background-repeat: no-repeat;
+      background-position: center center;
+      text-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+
+    .cancel {
+      width: 130px;
+      height: 38px;
+      font-size: 20px !important;
+      background-color: #f9fafb;
+      border: none;
+      /*border-color: #f9fafb;*/
+      background-image: url("../../assets/images/cancel-btn-bg.png");
+      background-repeat: no-repeat;
+      background-position: center center;
+      padding: 0 0;
+      text-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+
+    .cancel :hover, .cancel:focus {
+      background-color: #f9fafb;
+      border-color: #f9fafb;
+      background-image: url("../../assets/images/cancel-btn-bg.png");
+      background-repeat: no-repeat;
+      background-position: center center;
+      text-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+
+  }
+
+  .login-out-btn {
+    margin-top: 20px;
+    margin-bottom: 2px;
+
+    /deep/ .ant-btn-primary {
+      width: 130px;
+      height: 38px;
+      font-size: 20px !important;
+      background-color: #f9fafb;
+      text-align: center;
+      border: none;
+      /*border-color: #f9fafb;*/
+      background-image: url("../../assets/images/login-btn-bg.png");
+      background-repeat: no-repeat;
+      background-position: center center;
+      padding: 0 0;
+      text-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+
+    /deep/ .ant-btn-primary:hover, .ant-btn-primary:focus {
+      background-color: #f9fafb;
+      border-color: #f9fafb;
+      background-image: url("../../assets/images/login-btn-bg.png");
+      background-repeat: no-repeat;
+      background-position: center center;
+      text-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+
+    .cancel {
+      width: 130px;
+      height: 38px;
+      font-size: 20px !important;
+      background-color: #f9fafb;
+      text-align: center;
+      border: none;
+      /*border-color: #f9fafb;*/
+      background-image: url("../../assets/images/cancel-btn-bg.png");
+      background-repeat: no-repeat;
+      background-position: center center;
+      padding: 0 0;
+      text-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+
+    .cancel :hover, .cancel:focus {
+      background-color: #f9fafb;
+      border-color: #f9fafb;
+      background-image: url("../../assets/images/cancel-btn-bg.png");
+      background-repeat: no-repeat;
+      background-position: center center;
+      text-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+
+    .menu-hover:hover{
+      color: #70bad5;
     }
   }
 </style>

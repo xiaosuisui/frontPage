@@ -1,5 +1,5 @@
 <template>
-  <div style="background:#1d2437;padding: 0; width:100%;height:100%;" class="homeStyle">
+  <div style="background:#1d2437;padding: 0; width:100%;height:100%;" :class="routePath==='/home'?'homeStyle':''">
     <!-- 头部-->
     <a-row>
       <a-col :span="24">
@@ -11,33 +11,18 @@
             <!--               class="system-btn-stop"></a>-->
           </div>
           <div class="logo-text"></div>
-          <div class="run-timer" style="right: 282px">
+          <div class="run-timer" style="right: 282px; font-size: 14px">
+            <span :style="{color:plc===1?'#00d48d':'#dd2121'}">PLC通讯</span>
+            <img :src="[plc === 1?'./static/img/plc-on.gif':'./static/img/plc-off.png']" alt=""
+                 style="margin-left: 10px">
+          </div>
+          <div class="run-timer">
             <div>
               <img src="../../../assets/images/run-time.png"/>&nbsp;
             </div>
             <div style="font-size: 16px;color: #0f7291">运行时长</div>&nbsp;
             <div class="run-timer-bg">{{plcRunTime}}</div>&nbsp;
             <div style="font-size: 16px;color: #0f7291">分钟</div>
-          </div>
-          <div class="run-timer">
-            <div>
-              <img src="../../../assets/images/user-icon.png"/>&nbsp;
-            </div>
-            <div style="font-size: 16px;color: #0f7291">用户昵称</div>&nbsp;
-            <div class="run-timer-bg">{{user.username}}</div>&nbsp;&nbsp;
-            <div>
-              <a-popover placement="bottomRight" trigger="click" v-model="visible">
-                <template slot="content">
-                  <p style="margin: 10px;font-size: 16px;color: #6d6d6d" @click="switchAccount()">切换账号</p>
-                  <div style=" width:70%;height: 1px;background:rgba(0, 0, 0, 0.1); margin: 0 auto"></div>
-                  <p style="margin: 10px;font-size: 16px;color: #6d6d6d" @click="loginOut()">退出登录</p>
-                </template>
-                <!--                <template slot="title">-->
-                <!--                  <span>Title</span>-->
-                <!--                </template>-->
-                <img src="../../../assets/images/btn-popover.png" @click="popoverShow()"/>&nbsp;
-              </a-popover>
-            </div>
           </div>
         </div>
       </a-col>
@@ -156,10 +141,10 @@
           </a-row>
           <a-row class="btn-view" type="flex" align="middle" style="height: 82px">
             <a-col :span="8">
-              <div class="down-btn" @click="showConfirm()"></div>
+              <div :class="selectedProduction===null?'down-none-btn':'down-btn'" @click="showConfirm()"></div>
             </a-col>
             <a-col :span="8">
-              <div @click="stop()" class="pause-btn"></div>
+              <div @click="control()" :class="status==='start'?'start-btn':'pause-btn'"></div>
             </a-col>
             <a-col :span="8">
               <div @click="shutdown()" class="shutdown-btn"></div>
@@ -185,75 +170,6 @@
         <a-icon type="warning"/>&nbsp;<span>系统警告提示:</span>&nbsp;<span>无报警</span>
       </a-col>
     </a-row>
-    <a-modal
-      :visible="modalStatus"
-      :closable="false"
-      :footer="null"
-      :bodyStyle="bodyStyle"
-      :centered="true"
-      :width="360"
-      @cancel="() => setModalVisible(false)"
-    >
-      <a-form @submit.prevent="doLogin" :autoFormCreate="(form) => this.form = form" class="login-form">
-        <div class="login-title"></div>
-        <a-form-item
-          fieldDecoratorId="name"
-          :fieldDecoratorOptions="{rules: [{ required: true, message: '请输入用户名', whitespace: true}]}"
-          style="display: flex; justify-content: center;align-items: center">
-          <a-input size="large" class="input-bg" placeholder="请输入用户名">
-            <a-icon slot="prefix" type="user" style="color:#3586df"></a-icon>
-          </a-input>
-        </a-form-item>
-        <a-form-item
-          fieldDecoratorId="password"
-          :fieldDecoratorOptions="{rules: [{ required: true, message: '请输入密码', whitespace: true}]}"
-          style="display: flex; justify-content: center;align-items: center">
-          <a-input size="large" type="password" class="input-bg" placeholder="请输入密码">
-            <a-icon slot="prefix" type="lock" style="color:#3586df"></a-icon>
-          </a-input>
-        </a-form-item>
-        <a-row type="flex" justify="space-around">
-          <a-col :span="10">
-            <a-button :loading="loading" size="large" htmlType="submit" type="primary">
-              登录
-            </a-button>
-          </a-col>
-          <a-col :span="10">
-            <a-button size="large" type="primary" @click="setModalVisible(false)" class="cancel">
-              取消
-            </a-button>
-          </a-col>
-        </a-row>
-      </a-form>
-    </a-modal>
-    <a-modal
-      :visible="modalLoginOutStatus"
-      :closable="false"
-      :footer="null"
-      :bodyStyle="bodyStyleLoginOut"
-      :centered="true"
-      :width="360"
-      @cancel="() => setModalLoginOutVisible(false)"
-    >
-      <a-row style="margin-top: 6px">
-        <a-col :span="24" style="font-size: 28px;color: #28988a;text-align: center">温馨提示</a-col>
-      </a-row>
-      <a-row style="margin-top: 30px">
-        <a-col :span="24" style="font-size: 22px;color: #28988a;text-align: center">您是否要退出该账号?</a-col>
-      </a-row>
-      <a-row type="flex" justify="space-around" class="login-out-btn">
-        <a-col :span="10">
-          <a-button size="large" type="primary" @click="doLoginOut()">
-            确定
-          </a-button>
-        </a-col>
-        <a-col :span="10">
-          <a-button size="large" type="primary" @click="setModalLoginOutVisible(false)" class="cancel">
-            取消
-          </a-button>
-        </a-col>
-      </a-row>
-    </a-modal>
 
   </div>
 </template>
@@ -265,6 +181,7 @@
   import ACol from 'ant-design-vue/es/grid/Col'
   import ARow from 'ant-design-vue/es/grid/Row'
   import HeadInfo from '@/views/common/HeadInfo'
+
   const columns = [
     {
       title: '序号',
@@ -304,10 +221,10 @@
   const monitorDouble = []
   const colClass = 'six6'
   const monitorWeight = []
-  const plcRunTime =0
+  const plcRunTime = 0
   export default {
     name: 'Monitor',
-    components: {ARow, ACol, Icons,HeadInfo},
+    components: {ARow, ACol, Icons, HeadInfo},
     data () {
       return {
         monitorSingle,
@@ -319,26 +236,18 @@
         selectedRows: [],
         selectedRow: {},
         colClass: 'six6',
-        plcRunTime:'0',
+        plcRunTime: '0',
         stompClient: '',
         timer: '',
         selectedProduction: null,
-        runTimeReq:null,
+        runTimeReq: null,
         material_code: ['碳酸氢铵1117155684519196116845981', 'WPBS20190513180788', 'WPBS20190513180788', 'WPBS20190513180788', 'WPBS20190513180788'],
-        modalStatus: false,
-        bodyStyle: {
-          width: '360px',
-          height: '280px',
-        },
-        bodyStyleLoginOut: {
-          width: '360px',
-          height: '210px'
-        },
         loading: false,
         error: '',
-        activeKey: '1',
-        visible: false,
-        modalLoginOutStatus: false
+        plc: 1,
+        plcRequest: null,
+        status: 'start',
+        routePath:this.$route.path
       }
     },
     activated () {
@@ -349,17 +258,23 @@
       this.getData()//初始化列
       this.getFormula()//初始化数据库的数据
       this.initWebSocket()
-      this.runTimeReq=setInterval(()=>{
+      this.runTimeReq = setInterval(() => {
         this.$get('formular/runTime').then((r) => {
-          this.plcRunTime=r.data
+          this.plcRunTime = r.data
         })
-      },60000)
+      }, 60000)
+      this.plcRequest = setInterval(() => {
+        this.$get('formular/plc').then((r) => {
+          this.plc = r.data
+          console.log('plc' + this.plc)
+        })
+      }, 20000)
     },
     computed: {
       reserves () {
-        return (num,num1) => {
+        return (num, num1) => {
           console.log(num1)
-          if (num >num1) {
+          if (num > num1) {
             return 'card-item-title-white'
           }
           return 'card-item-title-red'
@@ -390,8 +305,11 @@
       // 页面离开时断开连接,清除定时器
       this.disconnect()
       clearInterval(this.timer)
-      if(this.runTimeReq){
+      if (this.runTimeReq) {
         clearInterval(this.runTimeReq)
+      }
+      if (this.plcRequest) {
+        clearInterval(this.plcRequest)
       }
     },
     methods: {
@@ -432,37 +350,37 @@
               tempHouseInfo.currentWeight = parseInt(tempHouseInfo.currentWeight) + parseInt(repObj.rawmaterialWeight)
             }
           })
-          this.stompClient.subscribe('/topic/monitor/warehouseWeightLess',(msg)=>{
-            const repObj=JSON.parse(msg.body)
-            const houseNo =parseInt(repObj.warehouseDetailName)
-            if(houseNo %2 ==1){//表明是奇数
-              let indexNo=(houseNo-1)/2
-              const tempHouseInfo =this.monitorSingle[indexNo]
-              tempHouseInfo.currentWeight=parseInt(tempHouseInfo.currentWeight)-parseInt(repObj.rawmaterialWeight)
-            }else if(houseNo %2 ==0){
-              let indexNo=houseNo /2 -1
+          this.stompClient.subscribe('/topic/monitor/warehouseWeightLess', (msg) => {
+            const repObj = JSON.parse(msg.body)
+            const houseNo = parseInt(repObj.warehouseDetailName)
+            if (houseNo % 2 == 1) {//表明是奇数
+              let indexNo = (houseNo - 1) / 2
+              const tempHouseInfo = this.monitorSingle[indexNo]
+              tempHouseInfo.currentWeight = parseInt(tempHouseInfo.currentWeight) - parseInt(repObj.rawmaterialWeight)
+            } else if (houseNo % 2 == 0) {
+              let indexNo = houseNo / 2 - 1
               const tempHouseInfo = this.monitorDouble[indexNo]
-              tempHouseInfo.currentWeight = parseInt(tempHouseInfo.currentWeight)-parseInt(repObj.rawmaterialWeight)
+              tempHouseInfo.currentWeight = parseInt(tempHouseInfo.currentWeight) - parseInt(repObj.rawmaterialWeight)
             }
           })
-          this.stompClient.subscribe('/topic/monitor/fornumarFinish',(msg)=>{
+          this.stompClient.subscribe('/topic/monitor/fornumarFinish', (msg) => {
             this.getFormula()
           })
 
-          this.stompClient.subscribe('/topic/monitor/weight',(msg)=>{
-            let data= JSON.parse(msg.body)
-            this.monitorWeight[data.index].nowWeight=data.weight
+          this.stompClient.subscribe('/topic/monitor/weight', (msg) => {
+            let data = JSON.parse(msg.body)
+            this.monitorWeight[data.index].nowWeight = data.weight
           })
 
-          this.stompClient.subscribe('/topic/monitor/barcode',(msg)=>{//新的条码的信息的扫描
-            let data=JSON.parse(msg.body)
-            this.material_code=data
+          this.stompClient.subscribe('/topic/monitor/barcode', (msg) => {//新的条码的信息的扫描
+            let data = JSON.parse(msg.body)
+            this.material_code = data
 
           })
 
-          this.stompClient.subscribe('/topic/monitor/currentBatchNo',(msg)=>{//更新当前的生产批次
-            const repObj=JSON.parse(msg.body)
-            this.selectedRow.currentBatch=repObj.currentBatch
+          this.stompClient.subscribe('/topic/monitor/currentBatchNo', (msg) => {//更新当前的生产批次
+            const repObj = JSON.parse(msg.body)
+            this.selectedRow.currentBatch = repObj.currentBatch
           })
           this.stompClient.subscribe('/topic/monitor/warehouseStatus', (msg) => { // 订阅服务端提供的某个topic
             const repObj = JSON.parse(msg.body)
@@ -523,20 +441,31 @@
           this.$message.error('请先选择工单')
         }
       },
+      control () {
+        if (this.status !== 'start') {
+          this.stop()
+        } else {
+          this.start()
+        }
+      },
       start () {
+        // this.status = 'pause'
         this.$get('formular/start').then((r) => {
           this.$message.success('工单' + record.name + '启动成功')
+          this.status = 'pause'
         })
       },
       //暂停
       stop () {
+        // this.status = 'start'
         this.$get('formular/stop').then((r) => {
           this.getFormula()
           this.$message.success('工单' + record.name + '暂停成功')
+          this.status = 'start'
         })
       },
       //guang
-      shutdown(){
+      shutdown () {
         this.$get('formular/shutdown').then((r) => {
           this.$message.success('系统关机')
         })
@@ -573,59 +502,6 @@
           let data = r.data
           this.data = data
         })
-      },
-      popoverShow () {
-        this.visible = !this.visible
-      },
-      // 登出
-      loginOut () {
-        this.visible = false
-        this.setModalLoginOutVisible(true)
-      },
-      doLoginOut () {
-        this.$router.push('/login')
-      },
-      // 切换账号
-      switchAccount () {
-        this.visible = false
-        this.setModalVisible(true)
-      },
-      setModalVisible (modalStatus) {
-        this.modalStatus = modalStatus
-      },
-      setModalLoginOutVisible (modalStatus) {
-        this.modalLoginOutStatus = modalStatus
-      },
-      doLogin () {
-        if (this.activeKey === '1') {
-          // 用户名密码登录
-          this.form.validateFields(['name', 'password'], (errors, values) => {
-            if (!errors) {
-              this.loading = true
-              let name = this.form.getFieldValue('name')
-              let password = this.form.getFieldValue('password')
-              this.$post('login', {
-                username: name,
-                password: password
-              }).then((r) => {
-                let data = r.data.data
-                this.saveLoginData(data)
-                this.setModalVisible(false)
-                setTimeout(() => {
-                  this.loading = false
-                }, 500)
-                this.$router.push('/')
-              }).catch(() => {
-                setTimeout(() => {
-                  this.loading = false
-                }, 500)
-              })
-            }
-          })
-        }
-      },
-      handleTabsChange (val) {
-        this.activeKey = val
       },
       ...mapMutations({
         setToken: 'account/setToken',
@@ -1100,9 +976,23 @@
     background-position: center center;
   }
 
+  .down-none-btn{
+    height: 44px;
+    background-image: url("../../../assets/images/down-none-btn.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+
   .pause-btn {
     height: 44px;
     background-image: url("../../../assets/images/pause-btn.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+
+  .start-btn {
+    height: 44px;
+    background-image: url("../../../assets/images/start-bg.png");
     background-repeat: no-repeat;
     background-position: center center;
   }
@@ -1220,172 +1110,10 @@
     width: 0;
   }
 
-  /deep/ .ant-popover-arrow {
-    background-color: #fafafa;
-  }
 
-  /deep/ .ant-popover-inner {
-    background-color: #fafafa;
-  }
-
-  /deep/ .ant-modal-content {
-    border-radius: 12px !important;
-  }
-
-  .login-form {
-    /*position: absolute;*/
-    /*right: 50px;*/
-    /*top: 44px;*/
-
-    .login-title {
-      width: 100%;
-      height: 32px;
-      background-image: url("../../../assets/images/login-title.png");
-      background-repeat: no-repeat;
-      /*background-size: 100% 100%;*/
-      background-position: center center;
-      margin-bottom: 28px;
-    }
-
-    .input-bg {
-      width: 210px;
-      height: 40px;
-    }
-
-    /deep/ .ant-input-lg {
-      font-size: 16px;
-      color: #3586df;
-      margin: 0 auto;
-      background-image: url("../../../assets/images/input-bg.png") !important;
-      background-repeat: no-repeat;
-      border-radius: 105px !important;
-      background-position: center center;
-    }
-
-    /deep/ .ant-input-lg::placeholder {
-      font-size: 16px;
-      color: #b4b4b4;
-    }
-
-    /deep/ .ant-btn-primary {
-      width: 130px;
-      height: 38px;
-      font-size: 20px !important;
-      background-color: #f9fafb;
-      border: none;
-      /*border-color: #f9fafb;*/
-      background-image: url("../../../assets/images/login-btn-bg.png");
-      background-repeat: no-repeat;
-      background-position: center center;
-      padding: 0 0;
-      text-shadow: none;
-      -webkit-box-shadow: none;
-      box-shadow: none;
-    }
-
-    /deep/ .ant-btn-primary:hover, .ant-btn-primary:focus {
-      background-color: #f9fafb;
-      border-color: #f9fafb;
-      background-image: url("../../../assets/images/login-btn-bg.png");
-      background-repeat: no-repeat;
-      background-position: center center;
-      text-shadow: none;
-      -webkit-box-shadow: none;
-      box-shadow: none;
-    }
-
-    .cancel {
-      width: 130px;
-      height: 38px;
-      font-size: 20px !important;
-      background-color: #f9fafb;
-      border: none;
-      /*border-color: #f9fafb;*/
-      background-image: url("../../../assets/images/cancel-btn-bg.png");
-      background-repeat: no-repeat;
-      background-position: center center;
-      padding: 0 0;
-      text-shadow: none;
-      -webkit-box-shadow: none;
-      box-shadow: none;
-    }
-
-    .cancel :hover, .cancel:focus {
-      background-color: #f9fafb;
-      border-color: #f9fafb;
-      background-image: url("../../../assets/images/cancel-btn-bg.png");
-      background-repeat: no-repeat;
-      background-position: center center;
-      text-shadow: none;
-      -webkit-box-shadow: none;
-      box-shadow: none;
-    }
-
-  }
-
-  .login-out-btn {
-    margin-top: 20px;
-    margin-bottom: 2px;
-
-    /deep/ .ant-btn-primary {
-      width: 130px;
-      height: 38px;
-      font-size: 20px !important;
-      background-color: #f9fafb;
-      text-align: center;
-      border: none;
-      /*border-color: #f9fafb;*/
-      background-image: url("../../../assets/images/login-btn-bg.png");
-      background-repeat: no-repeat;
-      background-position: center center;
-      padding: 0 0;
-      text-shadow: none;
-      -webkit-box-shadow: none;
-      box-shadow: none;
-    }
-
-    /deep/ .ant-btn-primary:hover, .ant-btn-primary:focus {
-      background-color: #f9fafb;
-      border-color: #f9fafb;
-      background-image: url("../../../assets/images/login-btn-bg.png");
-      background-repeat: no-repeat;
-      background-position: center center;
-      text-shadow: none;
-      -webkit-box-shadow: none;
-      box-shadow: none;
-    }
-
-    .cancel {
-      width: 130px;
-      height: 38px;
-      font-size: 20px !important;
-      background-color: #f9fafb;
-      text-align: center;
-      border: none;
-      /*border-color: #f9fafb;*/
-      background-image: url("../../../assets/images/cancel-btn-bg.png");
-      background-repeat: no-repeat;
-      background-position: center center;
-      padding: 0 0;
-      text-shadow: none;
-      -webkit-box-shadow: none;
-      box-shadow: none;
-    }
-
-    .cancel :hover, .cancel:focus {
-      background-color: #f9fafb;
-      border-color: #f9fafb;
-      background-image: url("../../../assets/images/cancel-btn-bg.png");
-      background-repeat: no-repeat;
-      background-position: center center;
-      text-shadow: none;
-      -webkit-box-shadow: none;
-      box-shadow: none;
-    }
-  }
-  .homeStyle{
-    height:100%;
-    margin:0;
+  .homeStyle {
+    height: 100%;
+    margin: 0;
     padding: 44px 0 0 0 !important;
   }
 
