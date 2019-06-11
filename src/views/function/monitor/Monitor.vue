@@ -247,7 +247,7 @@
         plc: 1,
         plcRequest: null,
         status: 'start',
-        routePath:this.$route.path
+        routePath: this.$route.path
       }
     },
     activated () {
@@ -869,10 +869,10 @@
 
   .lock {
     position: absolute;
-    top: 0px;
-    right: -26px;
-    width: 24px;
-    height: 24px;
+    top: -10px;
+    right: -36px;
+    width: 28px;
+    height: 28px;
   }
 
   .order-header {
@@ -976,7 +976,7 @@
     background-position: center center;
   }
 
-  .down-none-btn{
+  .down-none-btn {
     height: 44px;
     background-image: url("../../../assets/images/down-none-btn.png");
     background-repeat: no-repeat;

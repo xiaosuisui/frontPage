@@ -667,7 +667,10 @@
     </div>
     <a-row type="flex" class="args-row args-row-margin-motor">
       <a-col :span="1" class="args-col">
-        <div class="args-col-title args-col-header">电机</div>
+        <div class="args-col-title args-col-header args-col-header-oblique">
+          <span class="args-col-header-oblique-top-right-txt">电机</span>
+          <span class="args-col-header-oblique-bottom-left-txt">数值</span>
+        </div>
         <div class="args-col-title args-col-title-line">高速值（HZ）</div>
         <div class="args-col-title args-col-title-line">中速值（HZ）</div>
         <div class="args-col-title args-col-title-line">低速值（HZ）</div>
@@ -678,22 +681,28 @@
       <a-col :span="1" v-for="spiralMotor of spiralMotors" :key="spiralMotor.name" class="args-col">
         <div class="args-col-header args-col-header-line">{{spiralMotor.name}}</div>
         <div class="args-col-txt args-col-txt-line">
-          <a-input-number v-model="spiralMotor.highSpeedHZ" :disabled="isExit" :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
+          <a-input-number v-model="spiralMotor.highSpeedHZ" :disabled="isExit"
+                          :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
         </div>
         <div class="args-col-txt args-col-txt-line">
-          <a-input-number v-model="spiralMotor.mediumSpeedHZ" :disabled="isExit" :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
+          <a-input-number v-model="spiralMotor.mediumSpeedHZ" :disabled="isExit"
+                          :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
         </div>
         <div class="args-col-txt args-col-txt-line">
-          <a-input-number v-model="spiralMotor.lowSpeedHZ" :disabled="isExit" :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
+          <a-input-number v-model="spiralMotor.lowSpeedHZ" :disabled="isExit"
+                          :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
         </div>
         <div class="args-col-txt args-col-txt-line">
-          <a-input-number v-model="spiralMotor.highSpeed" :disabled="isExit" :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
+          <a-input-number v-model="spiralMotor.highSpeed" :disabled="isExit"
+                          :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
         </div>
         <div class="args-col-txt args-col-txt-line">
-          <a-input-number v-model="spiralMotor.mediumSpeed" :disabled="isExit" :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
+          <a-input-number v-model="spiralMotor.mediumSpeed" :disabled="isExit"
+                          :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
         </div>
         <div class="args-col-txt args-col-txt-line">
-          <a-input-number v-model="spiralMotor.allowance" :disabled="isExit" :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
+          <a-input-number v-model="spiralMotor.allowance" :disabled="isExit"
+                          :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
         </div>
       </a-col>
     </a-row>
@@ -704,7 +713,8 @@
           <a-row type="flex" class="args-row">
             <a-col class="args-col args-col-title ">开周期</a-col>
             <a-col class="args-col">
-              <a-input-number v-model="vibrator.open" :disabled="isExit" :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
+              <a-input-number v-model="vibrator.open" :disabled="isExit"
+                              :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
             </a-col>
           </a-row>
         </div>
@@ -712,7 +722,8 @@
           <a-row type="flex" class="args-row">
             <a-col class="args-col args-col-title ">关周期</a-col>
             <a-col class="args-col">
-              <a-input-number v-model="vibrator.close" :disabled="isExit" :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
+              <a-input-number v-model="vibrator.close" :disabled="isExit"
+                              :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
             </a-col>
           </a-row>
         </div>
@@ -726,7 +737,8 @@
           <a-row type="flex" class="args-row">
             <a-col class="args-col args-col-title ">开周期</a-col>
             <a-col class="args-col">
-              <a-input-number v-model="bridge.open" :disabled="isExit" :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
+              <a-input-number v-model="bridge.open" :disabled="isExit"
+                              :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
             </a-col>
           </a-row>
         </div>
@@ -734,7 +746,8 @@
           <a-row type="flex" class="args-row">
             <a-col class="args-col args-col-title ">关周期</a-col>
             <a-col class="args-col">
-              <a-input-number v-model="bridge.close" :disabled="isExit" :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
+              <a-input-number v-model="bridge.close" :disabled="isExit"
+                              :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
             </a-col>
           </a-row>
         </div>
@@ -953,8 +966,8 @@
 
 
       &-title {
-        height: 60px;
-        line-height: 60px;
+        height: 65px;
+        line-height: 65px;
         background: #2b385c;
 
         &-line {
@@ -963,9 +976,31 @@
       }
 
       &-header {
-        height: 70px;
-        line-height: 70px;
-        background: #2a3a69;
+        height: 72px;
+        line-height: 72px;
+        background-color: #2a3a69;
+
+        &-oblique {
+          background-image: url("../../../assets/images/line-bg.png");
+          background-repeat: no-repeat;
+          background-position: center;
+          position: relative;
+
+          &-top-right-txt {
+            position: absolute;
+            line-height: inherit;
+            top: -10px;
+            right: 20px;
+          }
+
+          &-bottom-left-txt {
+            position: absolute;
+            line-height: initial;
+            bottom: 10px;
+            left: 20px;
+          }
+        }
+
 
         &-line {
           border-left: 1px solid #2d354e;
@@ -973,16 +1008,16 @@
       }
 
       &-txt {
-        height: 60px;
-        line-height: 60px;
+        height: 65px;
+        line-height: 65px;
         background: #2d354e;
 
-        &-disEdit{
+        &-disEdit {
           background: #2d354e;
           border-radius: 0;
         }
 
-        &-edit{
+        &-edit {
           background: #1d2437;
           border-radius: 2px;
         }
