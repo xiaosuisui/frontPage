@@ -7,10 +7,10 @@
 		</a-row>
 	<a-button style="margin-top: 20px;" class="editable-add-btn" type="primary" @click="handleAdd">新增</a-button>
 	<div style="margin-top: 15px;"></div>
-     <a-table ref="TableInfo" :columns="columns" :dataSource="data" :scroll="{ x: 1700}" 
+     <a-table ref="TableInfo" :columns="columns" :dataSource="data" :scroll="{ x: 1700}"
      	  :pagination="pagination"
-          :loading="loading" size="small" @change="handleTableChange"
-          bordered>
+          :loading="loading" @change="handleTableChange"
+          >
        <template slot="front" slot-scope="text, record, index">
        		<span v-if='record.key==999999'>
        			原材料
@@ -46,7 +46,7 @@
 		        <span v-else>
 		          <a @click="() => edit(record.key)">编辑</a>
 		        </span>
-		    </span>    
+		    </span>
 	      </div>
 	    </template>
   </a-table>
@@ -88,7 +88,7 @@ export default {
     ...mapState({
       user: state => state.account.user
     })},
-   
+
   methods: {
     handleChange (value, key, column) {
       const newData = [...this.data]
@@ -99,7 +99,7 @@ export default {
       }
     },
     handleTableChange (pagination, filters, sorter) {
-		      // 将这三个参数赋值给Vue data，用于后续使用      
+		      // 将这三个参数赋值给Vue data，用于后续使用
       this.paginationInfo = pagination
       this.filteredInfo = filters
       this.sortedInfo = sorter
@@ -139,28 +139,33 @@ export default {
 	  const initData={}//初始化的料框物料的数据
 	  initData['key']='999999'
 	  const column=[]//定义返回值
-	  column.push({title: '料仓名称', dataIndex: 'front',scopedSlots: { customRender: 'front'},fixed:'left',width:80})
-  	  this.$get('warehousedetail/formulaDetail', {
+	  column.push({title: '料仓名称', dataIndex: 'front',scopedSlots: { customRender: 'front'},fixed:'left',width:120})
+
+      this.$get('warehousedetail/formulaDetail', {
         ...params
       }).then((r) => {
          const detailData = r.data//详细的数据
          this.dataLength=detailData.length
          for( let i=1;i<=detailData.length;i++){//拼装title
            const titleAddData={title: `${i}`,dataIndex: `house0${i}`, scopedSlots: { customRender: `house0${i}`}}
+
            column.push(titleAddData)
            initData[`house0${i}`]=detailData[i-1]['rawmaterialName']
            this.editColumns.push(`house0${i}`)
          }
-         column.push({title: '配方名称',dataIndex: 'formulaName',scopedSlots: { customRender: 'formulaName'},fixed:'right',width:110})
+
+        column.push({title: '配方名称',dataIndex: 'formulaName',scopedSlots: { customRender: 'formulaName'},fixed:'right',width:110})
         // column.push({title: '批次',dataIndex: 'batchNo',scopedSlots: { customRender: 'batchNo'},fixed:'right',width:60})
         // column.push({title: '差值',dataIndex: 'offsetValue',scopedSlots: { customRender: 'offsetValue'},fixed:'right',width:60})
-         column.push({title: '操作', dataIndex: 'operation',class:'testClass',scopedSlots: { customRender: 'operation'},fixed:'right',width:60})
-     	 this.columns=column
+         column.push({title: '操作', dataIndex: 'operation',class:'testClass',scopedSlots: { customRender: 'operation'},fixed:'right',width:100})
+
+        this.columns=column
      	 this.editColumns.push(`formulaName`)
      	// this.editColumns.push(`batchNo`)
      	// this.editColumns.push(`offsetValue`)
      	 initData.editable=false;//
      	 this.data.push(initData)
+        console.log(this.columns)
       })
     },
     deleteRecord(record){
@@ -222,7 +227,7 @@ export default {
        	 	this.fetch()
           }).catch(() => {
           })
- 
+
       }
     },
     cancel (key) {
@@ -238,7 +243,9 @@ export default {
 }
 </script>
 <style  lang="less" scoped>
-.editable-row-operations a {
+  @import "../../../../static/less/Common";
+
+  .editable-row-operations a {
   margin-right: 8px;
 }
 </style>
