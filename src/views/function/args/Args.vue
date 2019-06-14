@@ -781,22 +781,22 @@
       for (let i = 1; i <= 12; i++) {
         this.spiralMotors.push({
           name: `${i}号螺旋电机`,
-          highSpeedHZ: 3445,
-          mediumSpeedHZ: 3445,
-          lowSpeedHZ: 3445,
-          highSpeed: 3445,
-          mediumSpeed: 3445,
-          allowance: 3445
+          highSpeedHZ:'',
+          mediumSpeedHZ:'' ,
+          lowSpeedHZ:'',
+          highSpeed:'',
+          mediumSpeed:'',
+          allowance: ''
         })
         this.vibrators.push({
           name: `${i}号振动器`,
-          open: 3445,
-          close: 3445
+          open: "",
+          close:""
         })
         this.bridges.push({
           name: `${i}号破桥器`,
-          open: 3445,
-          close: 3445
+          open: "",
+          close: ""
         })
       }
     },
@@ -868,7 +868,22 @@
       },
       save () {
         this.isExit = true
-        console.log(this.spiralMotors)
+        var Params = {
+				  authors: this.spiralMotors,
+				  author01:this.vibrators,
+				  author02:this.bridges
+				}
+         $.ajax({
+				  url: 'http://127.0.0.1:9527/setting/setDbArg',
+ 					method: 'post',
+ 					processData:false,
+  				contentType: "application/json; charset=utf-8",
+  				dataType: "json",
+  				data: JSON.stringify(Params)
+					}).then( res => {
+ 						 console.log(res)
+					})
+
       }
     }
   }

@@ -1,8 +1,13 @@
 <template>
 	<a-card :bordered="false" class="card-area">
       <div :class="advanced ? 'search' : null">
+      	<a-row style="margin-top: 10px;">
+			<a-col :md="8">
+				<a-button type="primary" style="margin-left: 5px;height: 40px;line-height: 40px;">料仓模板管理</a-button>
+			</a-col>
+		</a-row>
       <!-- 搜索区域 -->
-      <a-form layout="horizontal">
+      <a-form style="margin-top:20px" layout="horizontal">
         <a-row>
         <div :class="advanced ? null: 'fold'">
             <a-col :md="12" :sm="24">

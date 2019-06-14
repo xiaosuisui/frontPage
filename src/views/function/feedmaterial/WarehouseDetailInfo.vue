@@ -34,7 +34,7 @@
         <p><a-icon type="login" />预警值：{{warehouseDetailInfoData.warnWeight}}</p>
       </a-layout-content>
     </a-layout>
-    <a-button type="primary" @click="printer" >打印条码</a-button>
+    <a-button type="primary" style="margin-left:5px" @click="printer" >打印条码</a-button>
     </a-modal>
      
 </template>

@@ -100,7 +100,7 @@
         <div class="order-header">执行工单</div>
         <a-row :gutter="3" class="order">
           <a-col :span="4" class="order-item">
-            工单号/配方号
+            工单号
           </a-col>
           <a-col :span="4" class="order-item order-double">
             {{selectedRow.name}}
@@ -190,7 +190,7 @@
       width: 90,
       scopedSlots: {customRender: 'index'},
     }, {
-      title: '工单号/配方号',
+      title: '工单号',
       dataIndex: 'name',
       align: 'center',
       width: 150,
@@ -323,7 +323,7 @@
       },
       connection () {
         // 建立连接对象
-        let socket = new SockJS('http://101.132.139.133:9527/webSocketServer')
+        let socket = new SockJS('http://127.0.0.1:9527/webSocketServer')
         // 获取STOMP子协议的客户端对象
         this.stompClient = Stomp.over(socket)
         // 定义客户端的认证信息,按需求配置

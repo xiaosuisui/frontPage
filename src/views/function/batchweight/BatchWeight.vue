@@ -1,8 +1,13 @@
 <template>
 	<a-card :bordered="false" class="card-area">
 	<div :class="advanced ? 'search' : null">
+		<a-row style="margin-top: 10px;">
+			<a-col :md="8">
+				<a-button type="primary" style="margin-left: 5px;height: 40px;line-height: 40px;">批次称量查询</a-button>
+			</a-col>
+		</a-row>
       <!-- 搜索区域 -->
-      <a-form layout="horizontal">
+      <a-form style="margin-top: 20px;" layout="horizontal">
         <a-row >
         <div :class="advanced ? null: 'fold'">
             <a-col :md="8" :sm="24" >
@@ -17,6 +22,7 @@
           <span style="float: right; margin-top: 3px;">
             <a-button type="primary" @click="search">查询</a-button>
             <a-button type="primary" style="margin-left: 8px" @click="reset">重置</a-button>
+               <a-button type="primary" style="margin-left: 8px" @click="exportExcel">导出</a-button>
           </span>
         </a-row>
       </a-form>
@@ -35,7 +41,7 @@
 </template>
 <script>
 	export default{
-		name:'FinalBarcode',
+		name:'BatchWeight',
 		data(){
 			return{
 		queryParams: {},
@@ -84,7 +90,7 @@
         sorter: true,
         sortOrder: sortedInfo.columnKey === 'standWeight' && sortedInfo.order
       }, {
-        title: '实际重量',
+        title: '计量重量',
         dataIndex: 'actualWeight',
         sorter: true,
         ortOrder: sortedInfo.columnKey === 'actualWeight' && sortedInfo.order
@@ -102,6 +108,20 @@
     this.fetch()
   },
   methods:{
+  	exportExcel () {
+      let {sortedInfo} = this
+      let sortField, sortOrder
+      // 获取当前列的排序和列的过滤规则
+      if (sortedInfo) {
+        sortField = sortedInfo.field
+        sortOrder = sortedInfo.order
+      }
+      this.$export('productionData/bwexport', {
+        sortField: sortField,
+        sortOrder: sortOrder,
+        ...this.queryParams
+      })
+    },
   	search () {
       let {sortedInfo, filteredInfo} = this
       let sortField, sortOrder

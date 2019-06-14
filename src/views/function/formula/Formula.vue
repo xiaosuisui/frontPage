@@ -1,8 +1,13 @@
 <template>
 	<a-card :bordered="false" class="card-area">
-	<a-button class="editable-add-btn" type="primary" @click="handleAdd">添加配方</a-button>
-	<div style="margin-top: 10px;"></div>
-     <a-table ref="TableInfo" :columns="columns" :dataSource="data" :scroll="{ x: 1500}" 
+		<a-row style="margin-top: 10px;">
+			<a-col :md="8">
+				<a-button type="primary" style="margin-left: 5px;height: 40px;line-height: 40px;">配方编辑</a-button>
+			</a-col>
+		</a-row>
+	<a-button style="margin-top: 20px;" class="editable-add-btn" type="primary" @click="handleAdd">新增</a-button>
+	<div style="margin-top: 15px;"></div>
+     <a-table ref="TableInfo" :columns="columns" :dataSource="data" :scroll="{ x: 1700}" 
      	  :pagination="pagination"
           :loading="loading" size="small" @change="handleTableChange"
           bordered>
@@ -129,6 +134,7 @@ export default {
       })
     },
     getColumns(){
+      this.data=[]
 	  const params=''
 	  const initData={}//初始化的料框物料的数据
 	  initData['key']='999999'
@@ -145,10 +151,10 @@ export default {
            initData[`house0${i}`]=detailData[i-1]['rawmaterialName']
            this.editColumns.push(`house0${i}`)
          }
-         column.push({title: '配方名称',dataIndex: 'formulaName',scopedSlots: { customRender: 'formulaName'},fixed:'right',width:100})
+         column.push({title: '配方名称',dataIndex: 'formulaName',scopedSlots: { customRender: 'formulaName'},fixed:'right',width:110})
         // column.push({title: '批次',dataIndex: 'batchNo',scopedSlots: { customRender: 'batchNo'},fixed:'right',width:60})
         // column.push({title: '差值',dataIndex: 'offsetValue',scopedSlots: { customRender: 'offsetValue'},fixed:'right',width:60})
-         column.push({title: '操作', dataIndex: 'operation',scopedSlots: { customRender: 'operation'},fixed:'right',width:60})
+         column.push({title: '操作', dataIndex: 'operation',class:'testClass',scopedSlots: { customRender: 'operation'},fixed:'right',width:60})
      	 this.columns=column
      	 this.editColumns.push(`formulaName`)
      	// this.editColumns.push(`batchNo`)
@@ -231,7 +237,7 @@ export default {
   },
 }
 </script>
-<style scoped>
+<style  lang="less" scoped>
 .editable-row-operations a {
   margin-right: 8px;
 }

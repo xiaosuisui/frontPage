@@ -1,13 +1,18 @@
 <template>
 	<a-card :bordered="false" class="card-area">
 	<div :class="advanced ? 'search' : null">
+		<a-row style="margin-top: 10px;">
+			<a-col :md="8">
+				<a-button type="primary" style="margin-left: 5px;height: 40px;line-height: 40px;">故障记录查询</a-button>
+			</a-col>
+		</a-row>
       <!-- 搜索区域 -->
-      <a-form layout="horizontal">
+      <a-form  style="margin-top:20px" layout="horizontal">
         <a-row >
         <div :class="advanced ? null: 'fold'">
             <a-col :md="8" :sm="24" >
               <a-form-item
-                label="故障内容"
+                label="故障事项"
                 :labelCol="{span: 4}"
                 :wrapperCol="{span: 18, offset: 2}">
                 <a-input v-model="queryParams.content"/>
@@ -25,6 +30,7 @@
           <span style="float: right; margin-top: 3px;">
             <a-button type="primary" @click="search">查询</a-button>
             <a-button type="primary" style="margin-left: 8px" @click="reset">重置</a-button>
+            <a-button type="primary" style="margin-left: 8px" @click="exportExcel">导出</a-button>
           </span>
         </a-row>
       </a-form>
@@ -96,6 +102,20 @@
     this.fetch()
   },
   methods:{
+  	exportExcel () {
+      let {sortedInfo} = this
+      let sortField, sortOrder
+      // 获取当前列的排序和列的过滤规则
+      if (sortedInfo) {
+        sortField = sortedInfo.field
+        sortOrder = sortedInfo.order
+      }
+      this.$export('exception/export', {
+        sortField: sortField,
+        sortOrder: sortOrder,
+        ...this.queryParams
+      })
+    },
   	handleDateChange (value) {
       if (value) {
         this.queryParams.startDate = value[0]

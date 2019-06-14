@@ -1,8 +1,13 @@
 <template>
 	<a-card :bordered="false" class="card-area">
 	<div :class="advanced ? 'search' : null">
+		<a-row style="margin-top: 10px;">
+			<a-col :md="8">
+				<a-button type="primary" style="margin-left: 5px;height: 40px;line-height: 40px;">工单管理</a-button>
+			</a-col>
+		</a-row>
       <!-- 搜索区域 -->
-      <a-form layout="horizontal">
+      <a-form style="margin-top: 20px;" layout="horizontal">
         <a-row >
         <div :class="advanced ? null: 'fold'">
             <a-col :md="8" :sm="24" >
@@ -38,7 +43,7 @@
                :pagination="pagination"
                :loading="loading" 
                @change="handleTableChange">
-              <template v-for="col in ['workOrder','batchNo','offsetValue']" :slot="col" slot-scope="text, record, index">
+              <template v-for="col in ['workOrder','batchNo']" :slot="col" slot-scope="text, record, index">
 	      		<div :key="col">
 	       			 <a-input
 	          			v-if="record.editable"
@@ -53,7 +58,7 @@
         	<a-icon type="download" twoToneColor="#4a9ff5" style="cursor:hand;"  @click="downloadorder(record.key)" title="下载工单"></a-icon>
         </template>
         <template slot="operation" slot-scope="text, record">
-          <a-icon v-hasPermission="'rawmaterial:update'" type="delete" theme="twoTone" twoToneColor="#4a9ff5" @click="deleteRecord(record)" title="删除工单"></a-icon>
+        	<a @click="() => deleteRecord(record)">删除</a>
             <span v-if="record.editable">
 		          <a @click="() => save(record.key)">保存</a>
 		          <a-popconfirm title='Sure to cancel?' @confirm="() => cancel(record.key)">
