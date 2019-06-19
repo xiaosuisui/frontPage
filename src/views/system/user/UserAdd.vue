@@ -19,7 +19,7 @@
       </a-form-item>
       <a-form-item label='密码' v-bind="formItemLayout">
         <a-tooltip title='新用户默认密码为 1234qwer'>
-          <a-input type='password' readOnly :value="defaultPassword"/>
+          <a-input type='password'  v-model="user.password" />
         </a-tooltip>
       </a-form-item>
       <a-form-item label='邮箱' v-bind="formItemLayout">
@@ -46,15 +46,6 @@
           v-decorator="['role',{rules: [{ required: true, message: '请选择角色' }]}]">
           <a-select-option v-for="r in roleData" :key="r.roleId">{{r.roleName}}</a-select-option>
         </a-select>
-      </a-form-item>
-      <a-form-item label='部门' v-bind="formItemLayout">
-        <a-tree-select
-          :allowClear="true"
-          :dropdownStyle="{ maxHeight: '220px', overflow: 'auto' }"
-          :treeData="deptTreeData"
-          v-decorator="['deptId']"
-          v-model="user.deptId">
-        </a-tree-select>
       </a-form-item>
       <a-form-item label='状态' v-bind="formItemLayout">
         <a-radio-group
@@ -97,13 +88,13 @@ export default {
   data () {
     return {
       user: {
-        username: ''
+        username: '',
+        password:'1234qwer'
       },
       loading: false,
       roleData: [],
       deptTreeData: [],
       formItemLayout,
-      defaultPassword: '1234qwer',
       form: this.$form.createForm(this),
       validateStatus: '',
       help: ''

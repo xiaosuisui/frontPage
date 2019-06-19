@@ -104,5 +104,6 @@
 
   .fixed-header-content {
     margin: 76px 12px 0;
+    height: 100%;
   }
 </style>

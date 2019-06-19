@@ -84,6 +84,7 @@ export default {
 	this.getColumns()//初始化列
 	this.fetch()//初始化数据库的数据
   },
+
   computed: {
     ...mapState({
       user: state => state.account.user
@@ -134,7 +135,6 @@ export default {
       })
     },
     getColumns(){
-      this.data=[]
 	  const params=''
 	  const initData={}//初始化的料框物料的数据
 	  initData['key']='999999'
@@ -157,15 +157,13 @@ export default {
         column.push({title: '配方名称',dataIndex: 'formulaName',scopedSlots: { customRender: 'formulaName'},fixed:'right',width:110})
         // column.push({title: '批次',dataIndex: 'batchNo',scopedSlots: { customRender: 'batchNo'},fixed:'right',width:60})
         // column.push({title: '差值',dataIndex: 'offsetValue',scopedSlots: { customRender: 'offsetValue'},fixed:'right',width:60})
-         column.push({title: '操作', dataIndex: 'operation',class:'testClass',scopedSlots: { customRender: 'operation'},fixed:'right',width:100})
+         column.push({title: '操作', dataIndex: 'operation',scopedSlots: { customRender: 'operation'},fixed:'right',width:100})
 
         this.columns=column
      	 this.editColumns.push(`formulaName`)
-     	// this.editColumns.push(`batchNo`)
-     	// this.editColumns.push(`offsetValue`)
      	 initData.editable=false;//
-     	 this.data.push(initData)
-        console.log(this.columns)
+     	 if(this.data.length==0){this.data.push(initData)}else{this.data.slice(0,0,initData)}
+ 
       })
     },
     deleteRecord(record){
@@ -197,10 +195,7 @@ export default {
       const newData={front:``,key:``}
       for(let i=1;i<=this.columns.length;i++){newData[`house0${i}`]=``}
       newData[`formulaName`]=``
-     // newData[`batchNo`]=``
-     // newData[`offsetValue`]=``
 	  this.data.splice(1, 0, newData);
-     // this.data = [...data, newData]
     },
     edit (key) {
       const newData = [...this.data]

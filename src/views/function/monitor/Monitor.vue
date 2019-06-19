@@ -73,7 +73,7 @@
             <div class="card-item-title card-item-title-underline"><span>{{monitor.rawmaterialName?monitor.rawmaterialName:'空'}}</span>
             </div>
             <div class="card-item-title card-item-title-underline"><span
-              :class="reserves(monitor.currentWeight)">{{monitor.currentWeight}}</span></div>
+              :class="reserves(monitor.currentWeight,monitor.warnWeight)">{{monitor.currentWeight}}</span></div>
             <div class="card-item-title"><span>{{monitor.standardWeight?monitor.standardWeight:0}}</span></div>
           </a-col>
         </a-row>
@@ -167,7 +167,7 @@
     </a-row>
     <a-row style="margin:10px 0">
       <a-col :span="24" class="system-warning">
-        <a-icon type="warning"/>&nbsp;<span>系统警告提示:</span>&nbsp;<span>无报警</span>
+        <a-icon type="warning"/>&nbsp;<span>系统警告提示:</span>&nbsp;<span>{{warning}}</span>
       </a-col>
     </a-row>
 
@@ -222,6 +222,7 @@
   const colClass = 'six6'
   const monitorWeight = []
   const plcRunTime = 0
+  const warning="无报警"
   export default {
     name: 'Monitor',
     components: {ARow, ACol, Icons, HeadInfo},
@@ -237,6 +238,7 @@
         selectedRow: {},
         colClass: 'six6',
         plcRunTime: '0',
+        warning:"无报警",
         stompClient: '',
         timer: '',
         selectedProduction: null,
@@ -253,10 +255,12 @@
     activated () {
       this.getData()
       this.getFormula()
+      this.getException()
     },
     mounted () {
       this.getData()//初始化列
       this.getFormula()//初始化数据库的数据
+      this.getException()
       this.initWebSocket()
       this.runTimeReq = setInterval(() => {
         this.$get('formular/runTime').then((r) => {
@@ -273,7 +277,7 @@
     computed: {
       reserves () {
         return (num, num1) => {
-          console.log(num1)
+  
           if (num > num1) {
             return 'card-item-title-white'
           }
@@ -313,6 +317,7 @@
       }
     },
     methods: {
+   
       initWebSocket () {
         this.connection()
         let that = this
@@ -323,7 +328,7 @@
       },
       connection () {
         // 建立连接对象
-        let socket = new SockJS('http://101.132.139.133:9527/webSocketServer')
+        let socket = new SockJS('http://127.0.0.1:9527/webSocketServer')
         // 获取STOMP子协议的客户端对象
         this.stompClient = Stomp.over(socket)
         // 定义客户端的认证信息,按需求配置
@@ -362,6 +367,13 @@
               const tempHouseInfo = this.monitorDouble[indexNo]
               tempHouseInfo.currentWeight = parseInt(tempHouseInfo.currentWeight) - parseInt(repObj.rawmaterialWeight)
             }
+          })
+          this.stompClient.subscribe('/topic/monitor/exceptionDataCome', (msg) => {
+          	let data=JSON.parse(msg.body)
+            this.warning=data.content
+          })
+          this.stompClient.subscribe('/topic/monitor/exceptionDataGo', (msg) => {
+          	this.getException()
           })
           this.stompClient.subscribe('/topic/monitor/fornumarFinish', (msg) => {
             this.getFormula()
@@ -448,10 +460,19 @@
           this.start()
         }
       },
+      getException(){
+    		this.$get('exception/getException').then((r) => {
+          const data=r.data
+          console.log(data)
+    			this.warning=data.content==null?'暂无报警':data.content
+          
+        })
+    	},
       start () {
         // this.status = 'pause'
         this.$get('formular/start').then((r) => {
-          this.$message.success('工单' + record.name + '启动成功')
+          this.$message.success('工单启动成功') 
+          console.log('start success')
           this.status = 'pause'
         })
       },
@@ -460,7 +481,7 @@
         // this.status = 'start'
         this.$get('formular/stop').then((r) => {
           this.getFormula()
-          this.$message.success('工单' + record.name + '暂停成功')
+          this.$message.success('工单暂停成功')
           this.status = 'start'
         })
       },
@@ -580,7 +601,6 @@
     background-image: url("../../../assets/images/logo-bg.png");
 
   }
-
   .project-avatar {
     background: green !important;
     font-family: "微软雅黑";

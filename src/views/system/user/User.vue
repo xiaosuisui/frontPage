@@ -670,7 +670,7 @@
                 <a-input v-model="queryParams.username"/>
               </a-form-item>
             </a-col>
-            <a-col :md="12" :sm="24" >
+<!--            <a-col :md="12" :sm="24" >
               <a-form-item
                 label="部门"
                 :labelCol="{span: 4}"
@@ -679,7 +679,7 @@
                                  ref="deptTree">
                 </dept-input-tree>
               </a-form-item>
-            </a-col>
+            </a-col>-->
             <template v-if="advanced">
               <a-col :md="12" :sm="24" >
                 <a-form-item
@@ -704,8 +704,8 @@
     </div>
     <div>
       <div class="operator">
-        <a-button type="primary" ghost @click="add" v-hasPermission="'user:add'">新增</a-button>
-        <a-button @click="batchDelete" v-hasPermission="'user:delete'">删除</a-button>
+        <a-button type="primary"  @click="add" v-hasPermission="'user:add'">新增</a-button>
+        <a-button type="primary" @click="batchDelete" v-hasPermission="'user:delete'">删除</a-button>
         <a-dropdown v-hasAnyPermission="'user:reset','user:export'">
           <a-menu slot="overlay">
             <a-menu-item v-hasPermission="'user:reset'" key="password-reset" @click="resetPassword">密码重置</a-menu-item>
@@ -841,9 +841,6 @@
           dataIndex: 'email',
           scopedSlots: { customRender: 'email' },
           width: 100
-        }, {
-          title: '部门',
-          dataIndex: 'deptName'
         }, {
           title: '电话',
           dataIndex: 'mobile'

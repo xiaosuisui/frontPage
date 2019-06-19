@@ -40,15 +40,6 @@
           <a-select-option v-for="r in roleData" :key="r.roleId.toString()">{{r.roleName}}</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item label='部门' v-bind="formItemLayout">
-        <a-tree-select
-          :allowClear="true"
-          :dropdownStyle="{ maxHeight: '220px', overflow: 'auto' }"
-          :treeData="deptTreeData"
-          @change="onDeptChange"
-          :value="userDept">
-        </a-tree-select>
-      </a-form-item>
       <a-form-item label='状态' v-bind="formItemLayout">
         <a-radio-group
           v-decorator="[

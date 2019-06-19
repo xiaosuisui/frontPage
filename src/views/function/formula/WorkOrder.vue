@@ -176,7 +176,7 @@
         scopedSlots: { customRender: 'download' }
       },
           {
-       title: '删除',
+       title: '操作',
         dataIndex: 'operation',
         scopedSlots: { customRender: 'operation' }
       }
