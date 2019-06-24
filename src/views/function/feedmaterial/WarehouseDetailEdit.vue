@@ -20,7 +20,7 @@
         <a-input readOnly v-decorator="['rawmaterialNo']"/>
       </a-form-item>
       <a-form-item label='重量' v-bind="formItemLayout">
-        <a-input  v-decorator="['rawmaterialWeight']"/>
+        <a-input readOnly v-decorator="['rawmaterialWeight']"/>
       </a-form-item>
       <a-form-item label='预警值' v-bind="formItemLayout">
         <a-input  v-decorator="['warnWeight']"/>
@@ -68,7 +68,7 @@ export default {
   methods: {
   	sendSelectedId(param){
   		if(param=='0000'){
-  			let obj={'rawmaterialName':'','rawmaterialNo':''}
+  			let obj={'rawmaterialName':'','rawmaterialNo':'','weight':'0'}
   			this.form.setFieldsValue(obj)
   			return
   		}
@@ -77,7 +77,7 @@ export default {
         ...params
       }).then((r) => {
         let data = r.data
-        let obj={'rawmaterialName':data['rawmaterialName'],'rawmaterialNo':data['rawmaterialNo']}
+        let obj={'rawmaterialName':data['rawmaterialName'],'rawmaterialNo':data['rawmaterialNo'],'rawmaterialWeight':data['weight']}
         console.log(obj)
         this.form.setFieldsValue(obj)
       })

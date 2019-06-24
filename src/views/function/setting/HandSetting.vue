@@ -38,6 +38,13 @@
       </a-col>
     </a-row>
     <a-row type="flex" class="handSetting-row handSetting-row-padding-top">
+      <a-col v-for="item of  list7" :key="item.name" class="handSetting-col">
+        <div :class="item.status===0?'handSetting-col-txt':'handSetting-col-aim'" @click="singleAim(item)">
+          {{item.name}}
+        </div>
+      </a-col>
+    </a-row>
+    <a-row type="flex" class="handSetting-row handSetting-row-padding-top">
       <a-col v-for="item of  list5" :key="item.name" class="handSetting-col">
         <div :class="item.status===0?'handSetting-col-txt':'handSetting-col-aim'" @click="singleAim(item)">
           {{item.name}}
@@ -72,6 +79,7 @@
         list3: [],
         list4: [],
         list5: [],
+        list7: [],
         list6: [
           {name: '称台输送机', status: 1},
           {name: '入转弯输送机', status: 1},
@@ -85,7 +93,9 @@
           {name: '除尘机', status: 1}]
       }
     },
-
+    mounted (){
+    	this.fetch()
+    },
     created () {
       for (let i = 1; i <= 12; i++) {
         this.list1.push({
@@ -104,6 +114,11 @@
           name: `${i}号除尘阀`,
           status: 1
         })
+        this.list7.push({
+        	name: `${i}号供料阀`,
+          status: 1
+        })
+        
         if (i <= 10) {
           this.list5.push({
             name: `${i}号破桥器`,
@@ -113,8 +128,24 @@
       }
     },
     methods: {
+    	fetch(){
+    		this.$get('setting/getHandArgs', {
+         
+        }).then((r) => {
+           let data=r.data;
+           this.list1=data['list1']
+           this.list2=data['list2']
+           this.list3=data['list3']
+           this.list4=data['list4']
+           this.list5=data['list5']
+           this.list6=data['list6']
+           this.list7=data['list7']
+        })
+    		
+    	},
+    	
       aim () {
-        this.list1.map((item) => {
+/*        this.list1.map((item) => {
           item.status = 0
         })
         this.list2.map((item) => {
@@ -131,10 +162,17 @@
         })
         this.list6.map((item) => {
           item.status = 0
-        })
+        })*/
       },
       singleAim (item) {
-        item.status = 0
+      	const params=item;
+      	 this.$get('setting/setHandArgs', {
+         		...params
+        }).then((r) => {
+           let data=r.data;
+           console.log(data)
+           item.status=parseInt(data['result'])
+        })
       }
     }
   }

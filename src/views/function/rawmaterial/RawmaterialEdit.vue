@@ -16,6 +16,9 @@
        <a-form-item label='原材料编号' v-bind="formItemLayout">
         <a-input  v-decorator="['rawmaterialNo']"/>
       </a-form-item>
+      <a-form-item label='重量' v-bind="formItemLayout">
+        <a-input  v-decorator="['weight']"/>
+      </a-form-item>
       <a-form-item label='状态' v-bind="formItemLayout">
         <a-radio-group
           v-decorator="[
@@ -63,7 +66,7 @@ export default {
     },
     setFormValues ({...rawmaterial}) {
     	this.rawmaterialId=rawmaterial.rawmaterialId
-      let fields = ['rawmaterialName', 'rawmaterialNo', 'status']
+      let fields = ['rawmaterialName', 'rawmaterialNo','weight', 'status']
       Object.keys(rawmaterial).forEach((key) => {
         if (fields.indexOf(key) !== -1) {
           this.form.getFieldDecorator(key)

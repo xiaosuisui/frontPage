@@ -43,7 +43,7 @@
                :pagination="pagination"
                :loading="loading" 
                @change="handleTableChange">
-              <template v-for="col in ['workOrder','batchNo']" :slot="col" slot-scope="text, record, index">
+              <template v-for="col in ['workOrder','batchNo','offsetValue']" :slot="col" slot-scope="text, record, index">
 	      		<div :key="col">
 	       			 <a-input
 	          			v-if="record.editable"

@@ -1,19 +1,26 @@
 <template>
   <div class="page">
+  	<div v-if="show==='A'" style="position: absolute;right: 20px;top: 20px; cursor:hand"><a-icon style="font-size:50px;font-weight: 400;color:green" type="close" @click="goHome"/></div>
+  	<div v-if="show==='B'" style="position: absolute;right: 20px;top: 20px; cursor:hand"><a-icon style="font-size:50px;font-weight: 400;color:green" type="close" @click="goLogin"/></div>
+
     <a-row class="content">
       <a-col :span="24">
-        <div class="title">系统秘钥剩余0天0小时!</div>
+        <div class="title">系统秘钥剩余{{hours}}小时!</div>
         <div class="secret">当前秘钥: {{currentSecret}}</div>
         <div class="new-secret-content">
           <div class="new-secret">升级秘钥:</div>
           <div class="new-secret-input">
             <a-input placeholder="请输入您的秘钥" v-model="newSecret"/>
           </div>
-          <div class="new-secret submit-bg"></div>
+          <div @click="saveSecret" class="new-secret submit-bg"></div>
         </div>
-        <div class="warn">
-          <div class="warn-danger"></div>
-          您的秘钥还有3天即将到期，为了系统能正常运行，请联系商家服务！
+        <div class="warn" v-if="show==='A'">
+          <div  class="warn-danger"></div>
+          		您的秘钥即将到期，为了系统能正常运行，请联系管理员或者设备商家！
+        </div>
+        <div class="warn" v-if="show==='B'">
+          <div  class="warn-danger"></div>
+          		您的秘钥已经到期，为了系统能正常运行，请联系管理员或者设备商家！
         </div>
       </a-col>
     </a-row>
@@ -23,15 +30,56 @@
 <script>
   export default {
     name: 'Upgrade',
-
+    mounted () {
+    	this.fetch()
+  	},
     data: function () {
       return {
         advanced: false,
-        currentSecret: '3224577880',
+        currentSecret: 'erntr24kt5676445993!044',
         newSecret:'',
-        deadDate: '2019-06-24'
+        hours: '0',
+        show:'B'
       }
-    }
+    },
+    methods:{
+    	goHome(){
+    		this.$router.push('/')
+    	},
+    	goLogin(){
+    		this.$router.push('/login')
+    	},
+  		fetch(){
+  		this.$get('license', {
+
+     }).then((r) => {
+        let data = r.data
+        this.hours=data['leftTime']
+   			this.currentSecret=data['secret']
+   			if(parseInt(this.hours)<16){this.show='A'}
+   			if(parseInt(this.hours)==0){this.show='B'}
+      })
+  		},
+  		
+  		/*
+  		 * 保存秘钥
+  		 */
+  		saveSecret(){
+  			console.log(this.newSecret)
+  			const params={'secret': encodeURI(this.newSecret, "utf-8")}
+  			this.$get('license/saveLicense', {
+					...params
+     		}).then((r) => {
+     			let data=r.data;
+     			if(data['result']==='OK'){
+     				this.$message.success('秘钥升级成功！重新登录')
+     			}else{
+     				this.$message.success('秘钥不合法！重新输入')
+     			}
+        	
+      })
+  		}
+  	}
   }
 </script>
 
@@ -122,6 +170,14 @@
     align-items: center;
     justify-content: center;
     color: #f10909;
+    font-size: 16px;
+  }
+  .info{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    color: green;
     font-size: 16px;
   }
   .warn-danger {

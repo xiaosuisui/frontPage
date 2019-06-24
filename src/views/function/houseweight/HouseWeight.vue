@@ -106,25 +106,21 @@
       return [{
         title: '料仓编号',
         dataIndex: 'warehouseDetailName',
-        sorter: true,
-        sortOrder: sortedInfo.columnKey === 'warehouseDetailName' && sortedInfo.order
+        sorter: false
       }, {
         title: '原材料名称',
         dataIndex: 'rawmaterialName',
-        sorter: true,
-        sortOrder: sortedInfo.columnKey === 'rawmaterialName' && sortedInfo.order
+        sorter: false
       },
       {
         title: '总重量',
         dataIndex: 'currentWeight',
-        sorter: true,
-        sortOrder: sortedInfo.columnKey === 'currentWeight' && sortedInfo.order
+        sorter: false
       },
        {
         title: '预警值',
         dataIndex: 'warnWeight',
-        sorter: true,
-        sortOrder: sortedInfo.columnKey === 'warnWeight' && sortedInfo.order
+        sorter: false
       },
       {
        title: '操作',

@@ -800,6 +800,9 @@
         })
       }
     },
+    mounted (){
+    	this.fetch()
+    },
     methods: {
       clickLow () {
         const param = this.lowSpeedSettingEntity
@@ -865,6 +868,18 @@
       },
       edit () {
         this.isExit = !this.isExit
+      },
+      //读书数据
+      fetch(){
+      this.$get('setting/getDbArg', {
+         
+        }).then((r) => {
+           let data=r.data;
+           console.log(data)
+           this.spiralMotors=data['authors']
+           this.vibrators=data['author01']
+           this.bridges=data['author02']
+        })
       },
       save () {
         this.isExit = true

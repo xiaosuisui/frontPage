@@ -141,7 +141,14 @@
         dataIndex: 'rawmaterialNo',
         sorter: true,
         sortOrder: sortedInfo.columnKey === 'rawmaterialNo' && sortedInfo.order
-      }, {
+      },
+      {
+        title: '重量',
+        dataIndex: 'weight',
+        sorter: true,
+        sortOrder: sortedInfo.columnKey === 'weight' && sortedInfo.order
+      }, 
+      {
         title: '状态',
         dataIndex: 'status',
         customRender: (text, row, index) => {

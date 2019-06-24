@@ -25,6 +25,14 @@
                  @blur="handleRawmaterialBlur"
                  v-decorator="['rawmaterialNo',{rules: [{ required: true, message: '原材料编号不能为空'}]}]"/>
       </a-form-item>
+      <a-form-item label='重量'
+                   v-bind="formItemLayout"
+                   :validateStatus="validateStatus"
+                   :help="help">
+        <a-input v-model="rawmaterial.weight"
+                 @blur="handleRawmaterialBlur"
+                 v-decorator="['weight',{rules: [{ required: true, message: '原材料编号不能为空'}]}]"/>
+      </a-form-item>
       <a-form-item label='状态' v-bind="formItemLayout">
         <a-radio-group
           v-model="rawmaterial.status"

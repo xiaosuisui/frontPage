@@ -262,6 +262,7 @@
       this.getFormula()//初始化数据库的数据
       this.getException()
       this.initWebSocket()
+      this.getRunTime()//获取设备的运行时间
       this.runTimeReq = setInterval(() => {
         this.$get('formular/runTime').then((r) => {
           this.plcRunTime = r.data
@@ -277,8 +278,8 @@
     computed: {
       reserves () {
         return (num, num1) => {
-
-          if (num > num1) {
+					console.log(num,num1)
+          if (parseInt(num) > parseInt(num1)) {
             return 'card-item-title-white'
           }
           return 'card-item-title-red'
@@ -317,7 +318,7 @@
       }
     },
     methods: {
-
+		
       initWebSocket () {
         this.connection()
         let that = this
@@ -328,7 +329,7 @@
       },
       connection () {
         // 建立连接对象
-        let socket = new SockJS('http://101.132.139.133:9527/webSocketServer')
+        let socket = new SockJS('http://127.0.0.1:9527/webSocketServer')
         // 获取STOMP子协议的客户端对象
         this.stompClient = Stomp.over(socket)
         // 定义客户端的认证信息,按需求配置
@@ -402,6 +403,7 @@
               let indexNo = (houseNo - 1) / 2
               const tempHouseInfo = this.monitorSingle[indexNo]
               tempHouseInfo.status = repObj.status
+              console.log("status "+tempHouseInfo.status)
             } else if (houseNo % 2 == 0) {//偶数个
               let indexNo = houseNo / 2 - 1
               const tempHouseInfo = this.monitorDouble[indexNo]
@@ -417,6 +419,11 @@
         if (this.stompClient) {
           this.stompClient.disconnect()
         }
+      },
+      getRunTime(){
+      	 this.$get('formular/runTime').then((r) => {
+          this.plcRunTime = r.data
+        })
       },
       showConfirm () {
         this.$confirm({
@@ -480,8 +487,8 @@
       stop () {
         // this.status = 'start'
         this.$get('formular/stop').then((r) => {
-          this.getFormula()
           this.$message.success('工单暂停成功')
+           this.getFormula()
           this.status = 'start'
         })
       },

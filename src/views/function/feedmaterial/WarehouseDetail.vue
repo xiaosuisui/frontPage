@@ -116,23 +116,21 @@
       return [{
         title: '料仓编号',
         dataIndex: 'warehouseDetailName',
-        sorter: true,
-        sortOrder: sortedInfo.columnKey === 'warehouseDetailName' && sortedInfo.order
+        sorter: false
       }, {
         title: '原材料名称',
         dataIndex: 'rawmaterialName',
-        sorter: true,
-        sortOrder: sortedInfo.columnKey === 'rawmaterialName' && sortedInfo.order
+        sorter: false
       },
        {
         title: '原材料编号',
         dataIndex: 'rawmaterialNo',
-        sorter: true,
-        sortOrder: sortedInfo.columnKey === 'rawmaterialNo' && sortedInfo.order
+        sorter: false
       }, 
       {
         title: '状态',
         dataIndex: 'status',
+        sorter: false,
         customRender: (text, row, index) => {
           switch (text) {
             case '0':
@@ -142,38 +140,27 @@
             default:
               return text
           }
-        },
-        filters: [
-          { text: '开启', value: '1' },
-          { text: '锁定', value: '0' }
-        ],
-        filterMultiple: false,
-        filteredValue: filteredInfo.status || null,
-        onFilter: (value, record) => record.status.includes(value)
+        }
       },
        {
         title: '物料重量',
         dataIndex: 'rawmaterialWeight',
-        sorter: true,
-        sortOrder: sortedInfo.columnKey === 'rawmaterialWeight' && sortedInfo.order
+        sorter: false
       },
       {
         title: '总重量',
         dataIndex: 'currentWeight',
-        sorter: true,
-        sortOrder: sortedInfo.columnKey === 'currentWeight' && sortedInfo.order
+        sorter: false
       },
        {
         title: '预警值',
         dataIndex: 'warnWeight',
-        sorter: true,
-        sortOrder: sortedInfo.columnKey === 'warnWeight' && sortedInfo.order
+        sorter: false
       },
       {
-        title:'数量',
+        title:'单批打印数量',
         dataIndex: 'quantity',
-        sorter: true,
-        sortOrder: sortedInfo.columnKey === 'quantity' && sortedInfo.order
+        sorter: false
       },
       
       {

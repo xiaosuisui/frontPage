@@ -14,6 +14,7 @@
       <a-layout-content class="rawmaterial-content-one">
         <p><a-icon type="user"/>原材料名称：{{rawmaterialInfoData.rawmaterialName}}</p>
         <p><a-icon type="skin"/>原材料编号：{{rawmaterialInfoData.rawmaterialNo}}</p>
+         <p><a-icon type="skin"/>重量：{{rawmaterialInfoData.weight}}</p>
         <p><a-icon type="skin"/>创建人：{{rawmaterialInfoData.userName}}</p>
       </a-layout-content>
        <a-layout-content class="user-content-two">
