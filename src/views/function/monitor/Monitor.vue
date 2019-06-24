@@ -277,7 +277,6 @@
     computed: {
       reserves () {
         return (num, num1) => {
-
           if (num > num1) {
             return 'card-item-title-white'
           }
@@ -1128,6 +1127,12 @@
 
   /deep/ .ant-table-fixed-header .ant-table-scroll .ant-table-header::-webkit-scrollbar {
     width: 0;
+  }
+
+  /deep/ .ant-table-placeholder{
+    background: #2d354e !important;
+    border-bottom: 1px solid #2d354e;
+    color: #fff;
   }
 
 
