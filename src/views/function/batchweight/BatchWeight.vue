@@ -71,13 +71,33 @@
         title: '工单编号',
         dataIndex: 'formularName',
         sorter: true,
-        sortOrder: sortedInfo.columnKey === 'formularName' && sortedInfo.order
+        sortOrder: sortedInfo.columnKey === 'formularName' && sortedInfo.order,
+        // customRender: (value, row, index) => {
+        //   const obj = {
+        //     children: value,
+        //     attrs: {},
+        //   };
+        //   if (index === 2) {
+        //     obj.attrs.rowSpan = 2;
+        //   }
+        //   // These two are merged into above cell
+        //   if (index === 3) {
+        //     obj.attrs.rowSpan = 0;
+        //   }
+        //   if (index === 4) {
+        //     obj.attrs.colSpan = 1;
+        //   }
+        //   if (index === 5) {
+        //     obj.attrs.colSpan = 1;
+        //   }
+        //   return obj;
+        // }
       }, {
         title: '批次',
         dataIndex: 'batchNo',
         sorter: true,
         sortOrder: sortedInfo.columnKey === 'batchNo' && sortedInfo.order
-      }, 
+      },
        {
         title: '原料名称',
         dataIndex: 'rawmaterialName',
@@ -108,6 +128,10 @@
     this.fetch()
   },
   methods:{
+    // removal(arr){
+    //
+    //   return Object.keys(obj);
+    // },
   	exportExcel () {
       let {sortedInfo} = this
       let sortField, sortOrder

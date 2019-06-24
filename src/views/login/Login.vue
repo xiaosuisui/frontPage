@@ -68,11 +68,23 @@
                 password: password
               }).then((r) => {
                 let data = r.data.data
-                this.saveLoginData(data)
-                setTimeout(() => {
+                let message=r.data.message
+                console.log(message)
+                if(message=='NOK'){
+                	localStorage.setItem("expire","ok")
+                	console.log('come in')
+                	this.$router.push('/setting/upgrade')
+                }else if(message=='NNOK'){//试用提醒阶段
+                	  this.saveLoginData(data)
+                	  this.$router.push('/setting/upgrade')
+                }else{
+                	this.saveLoginData(data)
+                	setTimeout(() => {
                   this.loading = false
-                }, 500)
+                	}, 500)
+               
                 this.$router.push('/')
+                }
               }).catch(() => {
                 setTimeout(() => {
                   this.loading = false

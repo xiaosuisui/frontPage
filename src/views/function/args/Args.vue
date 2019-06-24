@@ -753,6 +753,21 @@
         </div>
       </a-col>
     </a-row>
+
+    <a-row type="flex" class="args-row args-row-margin">
+      <a-col :span="1" v-for="manual in manuals" :key="manual.name" class="args-col">
+        <div class="args-col-header args-col-header-line">{{manual.name}}</div>
+        <div class="args-col-txt args-col-txt-line">
+          <a-row type="flex" class="args-row">
+            <a-col class="args-col">
+              <a-input-number v-model="manual.value" :disabled="isExit"
+                              :class="isExit?'args-col-txt-disEdit':'args-col-txt-edit'"/>
+            </a-col>
+          </a-row>
+        </div>
+      </a-col>
+    </a-row>
+
   </div>
 </template>
 
@@ -774,6 +789,7 @@
         spiralMotors: [],
         vibrators: [],
         bridges: [],
+        manuals:[],
         isExit: true
       }
     },
@@ -799,6 +815,21 @@
           close: ""
         })
       }
+      for(let j=0;j<13;j++){
+        if(j<12){
+          this.manuals.push({
+            name:'手动给定值',
+            value:0
+          })
+        }else {
+          this.manuals.push({
+            name:'计量电机值',
+            value:0
+          })
+        }
+
+      }
+
     },
     mounted (){
     	this.fetch()
@@ -983,7 +1014,7 @@
         margin-top: 10px;
 
         &-motor {
-          padding-top: 20px;
+          padding-top: 10px;
         }
       }
     }
@@ -996,8 +1027,8 @@
 
 
       &-title {
-        height: 65px;
-        line-height: 65px;
+        height: 60px;
+        line-height: 60px;
         background: #2b385c;
 
         &-line {
@@ -1006,8 +1037,8 @@
       }
 
       &-header {
-        height: 72px;
-        line-height: 72px;
+        height: 60px;
+        line-height: 60px;
         background-color: #2a3a69;
 
         &-oblique {
@@ -1038,8 +1069,8 @@
       }
 
       &-txt {
-        height: 65px;
-        line-height: 65px;
+        height: 60px;
+        line-height: 60px;
         background: #2d354e;
 
         &-disEdit {

@@ -5,6 +5,7 @@ import PageView from '@/views/common/PageView'
 import LoginView from '@/views/login/Common'
 import EmptyPageView from '@/views/common/EmptyPageView'
 import HomePageView from '@/views/function/monitor/Monitor'
+import Upgrade from '@/views/function/setting/Upgrade'
 import db from 'utils/localstorage'
 import request from 'utils/request'
 
@@ -17,6 +18,11 @@ let constRouter = [
     component: LoginView
   },
   {
+  	path:'/setting/upgrade',
+  	name:'ww',
+  	component: Upgrade
+  },
+  {
     path: '/index',
     name: '首页',
     redirect: '/home'
@@ -27,7 +33,7 @@ let router = new Router({
   routes: constRouter
 })
 
-const whiteList = ['/login']
+const whiteList = ['/login','/setting/upgrade']
 
 let asyncRouter
 
@@ -43,7 +49,6 @@ router.beforeEach((to, from, next) => {
     if (!asyncRouter) {
       if (!userRouter) {
         request.get(`menu/${user.username}`).then((res) => {
-          // res.data[0].redirect = '/function/monitor'
           asyncRouter = res.data
           save('USER_ROUTER', asyncRouter)
           go(to, next)
@@ -55,7 +60,11 @@ router.beforeEach((to, from, next) => {
     } else {
       next()
     }
-  } else {
+  } else if(localStorage.getItem("expire")=='ok') {
+  	localStorage.removeItem("expire")
+  	next('/setting/upgrade')
+  }
+  else{
     next('/login')
   }
 })
